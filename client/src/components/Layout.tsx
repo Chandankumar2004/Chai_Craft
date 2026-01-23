@@ -157,50 +157,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <li>Sat - Sun: 9am - 10pm</li>
         </ul>
       </div>
-
-      {/* Contact + Support */}
-      <div className="space-y-3">
-        {/* Contact Us */}
-        <div>
-          <h4 className="font-serif font-bold mb-1">Contact Us</h4>
-          {/* <div className="flex justify-center md:justify-start gap-4"> */}
-             <div className="flex items-center gap-4 text-muted-foreground">
-            <a
-              href="https://www.youtube.com"
-              target="_blank"
-              className="text-muted-foreground hover:text-primary transition-transform duration-300 hover:scale-110"
-            >
-              <Youtube className="h-5 w-5" />
-            </a>
-
-            <a
-              href="https://www.facebook.com/chandan123456kumar"
-              target="_blank"
-              className="text-muted-foreground hover:text-primary transition-transform duration-300 hover:scale-110"
-            >
-              <Facebook className="h-5 w-5" />
-            </a>
-
-            <a
-              href="https://www.instagram.com"
-              target="_blank"
-              className="text-muted-foreground hover:text-primary transition-transform duration-300 hover:scale-110"
-            >
-              <Instagram className="h-5 w-5" />
-            </a>
-
-            {/* WhatsApp Chat */}
-            <a
-              href="https://wa.me/919304335185"
-              target="_blank"
-              className="text-muted-foreground hover:text-primary transition-transform duration-300 hover:scale-110"
-            >
-              <MessageCircle className="h-5 w-5" />
-            </a>
-
-          </div>
-        </div>
-
         {/* Support */}
         <div>
           {/* <h4 className="font-serif font-bold mb-3">Support</h4> */}
