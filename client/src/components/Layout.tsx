@@ -126,65 +126,70 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       <footer className="border-t bg-muted/30 mt-auto">
-        <div className="container mx-auto px-4 py-12">
-          {/* <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8"> */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-            <div className="space-y-4 lg:col-span-2">
-              <div className="flex items-center gap-2">
-                 <span className="font-serif text-xl font-bold text-primary">Chai Craft</span>
-              </div>
-              <p className="text-muted-foreground text-sm max-w-xs">
-                Brewing moments of joy, one cup at a time. Authentic flavors, premium ingredients.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-serif font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
-                <li><Link href="/menu" className="hover:text-primary transition-colors">Our Menu</Link></li>
-                <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-serif font-bold mb-4">Hours</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Mon - Fri: 8am - 9pm</li>
-                <li>Sat - Sun: 9am - 10pm</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-serif font-bold mb-4">Contact Us</h4>
-              <div className="flex gap-4">
-                <a href="https://www.facebook.com/chandan123456kumar" className="text-muted-foreground hover:text-primary transition-colors" title="YouTube">
-                  <Youtube className="h-5 w-5" />
-                </a>
-                <a href="https://www.facebook.com/chandan123456kumar" className="text-muted-foreground hover:text-primary transition-colors" title="Facebook">
-                  <Facebook className="h-5 w-5" />
-                </a>
-                <a href="https://www.facebook.com/chandan123456kumar" className="text-muted-foreground hover:text-primary transition-colors" title="Instagram">
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a href="https://www.facebook.com/chandan123456kumar" className="text-muted-foreground hover:text-primary transition-colors" title="WhatsApp Channel">
-                  <MessageCircle className="h-5 w-5" />
-                </a>
-              </div>
-            <div>
-              <h4 className="font-serif font-bold mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
-                <li>+91 93043 35185</li>
-                <li>hello@chaicraft.com</li>
-                <li>123 Tea Garden Road.</li>
-              </ul>
-              
-            </div>
-            
-            </div>
-          </div>
-          <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Chai Craft. All rights reserved.
+  <div className="container mx-auto px-4 py-12">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+
+      {/* Brand */}
+      <div className="space-y-4 md:col-span-2">
+        <div className="flex items-center gap-2">
+          <span className="font-serif text-xl font-bold text-primary">
+            Chai Craft
+          </span>
+        </div>
+        <p className="text-muted-foreground text-sm max-w-xs">
+          Brewing moments of joy, one cup at a time. Authentic flavors, premium ingredients.
+        </p>
+      </div>
+
+      {/* Quick Links */}
+      <div>
+        <h4 className="font-serif font-bold mb-4">Quick Links</h4>
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          <li><Link href="/" className="hover:text-primary">Home</Link></li>
+          <li><Link href="/menu" className="hover:text-primary">Our Menu</Link></li>
+          <li><Link href="/about" className="hover:text-primary">About Us</Link></li>
+        </ul>
+      </div>
+
+      {/* Hours */}
+      <div>
+        <h4 className="font-serif font-bold mb-4">Hours</h4>
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          <li>Mon - Fri: 8am - 9pm</li>
+          <li>Sat - Sun: 9am - 10pm</li>
+        </ul>
+      </div>
+
+      {/* Contact + Support (ONE COLUMN) */}
+      <div className="space-y-8">
+        <div>
+          <h4 className="font-serif font-bold mb-4">Contact Us</h4>
+          <div className="flex gap-4">
+            <Youtube className="h-5 w-5 text-muted-foreground hover:text-primary" />
+            <Facebook className="h-5 w-5 text-muted-foreground hover:text-primary" />
+            <Instagram className="h-5 w-5 text-muted-foreground hover:text-primary" />
+            <MessageCircle className="h-5 w-5 text-muted-foreground hover:text-primary" />
           </div>
         </div>
-      </footer>
+
+        <div>
+          <h4 className="font-serif font-bold mb-4">Support</h4>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li>+91 93043 35185</li>
+            <li>hello@chaicraft.com</li>
+            <li>123 Tea Garden Road.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
+      © {new Date().getFullYear()} Chai Craft. All rights reserved.
+    </div>
+  </div>
+</footer>
+
     </div>
   );
 }
