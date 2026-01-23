@@ -158,8 +158,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <li>hello@chaicraft.com</li>
                 <li>123 Tea Garden Road</li>
               </ul>
-            </div>
-            <div>
+              <div>
               <h4 className="font-serif font-bold mb-4">Contact Us</h4>
               <div className="flex gap-4">
                 <a href="https://www.facebook.com/chandan123456kumar" className="text-muted-foreground hover:text-primary transition-colors" title="YouTube">
@@ -175,6 +174,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <MessageCircle className="h-5 w-5" />
                 </a>
               </div>
+            </div>
+            
             </div>
           </div>
           <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
