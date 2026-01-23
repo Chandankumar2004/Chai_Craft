@@ -127,7 +127,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <footer className="border-t bg-muted/30 mt-auto">
         <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8"> */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
             <div className="space-y-4 lg:col-span-2">
               <div className="flex items-center gap-2">
                  <span className="font-serif text-xl font-bold text-primary">Chai Craft</span>
