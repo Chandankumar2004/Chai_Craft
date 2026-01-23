@@ -1,0 +1,173 @@
+Create a full production-ready Tea Shop web application named “Chai Craft” using React and Firebase.
+
+TECH STACK:
+- Frontend: React.js
+- Styling: Tailwind CSS (premium, clean UI)
+- Backend: Firebase
+- Authentication: Firebase Auth
+- Database: Firestore
+- Storage: Firebase Storage
+- Responsive for mobile, tablet, desktop
+
+--------------------------------------------------
+AUTHENTICATION SYSTEM
+--------------------------------------------------
+Implement role-based authentication with two roles:
+
+1. USER
+2. ADMIN
+
+Login Page:
+- Two tabs: User Login | Admin Login
+- Email + Password authentication
+- Forgot Password option for both
+- Role-based redirection after login
+
+--------------------------------------------------
+USER FEATURES
+--------------------------------------------------
+
+USER ACCOUNT:
+- Sign up & login
+- Update profile:
+  - Name
+  - Phone number
+  - Address
+  - Profile photo URL
+
+MENU & SHOPPING:
+- Dynamic menu loaded from Firestore
+- Categories: Tea, Coffee, Snacks
+- Each item shows:
+  - Image
+  - Name
+  - Price
+  - Ingredients
+  - Weight
+  - Stock status
+  - Best Seller badge
+- Search & filter
+- Hindi / English language toggle
+
+CART SYSTEM:
+- Add / remove items
+- Quantity control
+- Persistent cart
+- Stock-aware (cannot exceed stock)
+
+CHECKOUT:
+- Address confirmation
+- Order summary
+- Select payment method (UPI only)
+
+--------------------------------------------------
+UPI PAYMENT SYSTEM (IMPORTANT)
+--------------------------------------------------
+
+PAYMENT TYPE:
+- Manual UPI Payment (All UPI apps supported)
+
+DISPLAY ON PAYMENT PAGE:
+- UPI QR Code image
+- UPI ID: chandan32005c-2@oksbi
+- Mobile Number: 9304335185
+- Text: “Scan & Pay using any UPI App (Google Pay, PhonePe, Paytm, BHIM)”
+
+PAYMENT FLOW:
+1. User scans QR / pays via any UPI app
+2. User clicks checkbox: “I have completed the payment”
+3. Place Order button activates
+4. Order is saved with:
+   - paymentMethod: "UPI"
+   - paymentStatus: "Pending Verification"
+   - paidToUPI: "chandan32005c-2@oksbi"
+   - paidToNumber: "9304335185"
+
+Show message:
+“Payment submitted. Order will be confirmed after verification.”
+
+--------------------------------------------------
+ORDER SYSTEM (USER)
+--------------------------------------------------
+- View order history
+- Track order status:
+  Pending → Confirmed → Delivered / Cancelled
+- View payment status
+
+--------------------------------------------------
+ADMIN FEATURES
+--------------------------------------------------
+
+ADMIN ACCESS:
+- Separate admin login
+- Protected /admin routes
+- Only admins can access dashboard
+
+ADMIN DASHBOARD:
+- Total revenue
+- Total orders
+- Pending payments
+- Delivered orders
+- Low stock alerts
+
+MENU MANAGEMENT:
+- Add / Edit / Delete products
+- Fields:
+  - Name (English)
+  - Auto Hindi translation
+  - Price
+  - Stock
+  - Category
+  - Ingredients
+  - Weight
+  - Best Seller toggle
+  - Image upload
+
+ORDER MANAGEMENT:
+- View all orders
+- Update order status
+- View payment status
+
+PAYMENT VERIFICATION (ADMIN):
+- Admin can mark payment as:
+  - Verified
+  - Failed
+- On verification:
+  - paymentStatus → Paid
+  - orderStatus → Confirmed
+
+USER MANAGEMENT:
+- View all users
+- Create new admin users
+
+--------------------------------------------------
+DATABASE STRUCTURE (FIRESTORE)
+--------------------------------------------------
+
+Collections:
+- users
+- admins
+- products
+- orders
+- payments
+
+Security Rules:
+- Users can read/write only their data
+- Admins can access everything
+- Users cannot change payment status
+
+--------------------------------------------------
+UI & UX
+--------------------------------------------------
+- Premium tea-shop theme
+- Smooth animations
+- Loading & error states
+- Clean card layout
+- Mobile-first design
+
+FINAL OUTPUT:
+- Fully functional Tea Shop website
+- Secure login system
+- Working UPI payment flow
+- Admin-controlled payment verification
+- Production-ready Firebase app
