@@ -158,19 +158,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <li>hello@chaicraft.com</li>
                 <li>123 Tea Garden Road</li>
               </ul>
-
+            </div>
+            <div>
               <h4 className="font-serif font-bold mb-4">Contact Us</h4>
               <div className="flex gap-4">
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="YouTube">
+                <a href="https://www.facebook.com/chandan123456kumar" className="text-muted-foreground hover:text-primary transition-colors" title="YouTube">
                   <Youtube className="h-5 w-5" />
                 </a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="Facebook">
+                <a href="https://www.facebook.com/chandan123456kumar" className="text-muted-foreground hover:text-primary transition-colors" title="Facebook">
                   <Facebook className="h-5 w-5" />
                 </a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="Instagram">
+                <a href="https://www.facebook.com/chandan123456kumar" className="text-muted-foreground hover:text-primary transition-colors" title="Instagram">
                   <Instagram className="h-5 w-5" />
                 </a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="WhatsApp Channel">
+                <a href="https://www.facebook.com/chandan123456kumar" className="text-muted-foreground hover:text-primary transition-colors" title="WhatsApp Channel">
                   <MessageCircle className="h-5 w-5" />
                 </a>
               </div>
