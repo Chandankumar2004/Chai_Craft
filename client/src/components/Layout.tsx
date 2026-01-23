@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useUser, useLogout } from "@/hooks/use-auth";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Menu, User as UserIcon, LogOut, Package } from "lucide-react";
+import { ShoppingCart, Menu, User as UserIcon, LogOut, Package, Youtube, Facebook, Instagram, MessageCircle } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import logoImg from "@assets/ChatGPT_Image_Jan_17__2026__12_39_49_PM-removebg-preview_1769163582832.png";
@@ -127,36 +127,52 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <footer className="border-t bg-muted/30 mt-auto">
         <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8">
+            <div className="space-y-4 lg:col-span-2">
               <div className="flex items-center gap-2">
                  <span className="font-serif text-xl font-bold text-primary">Chai Craft</span>
               </div>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-sm max-w-xs">
                 Brewing moments of joy, one cup at a time. Authentic flavors, premium ingredients.
               </p>
             </div>
             <div>
               <h4 className="font-serif font-bold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/" className="hover:text-primary">Home</Link></li>
-                <li><Link href="/menu" className="hover:text-primary">Our Menu</Link></li>
-                <li><Link href="/about" className="hover:text-primary">About Us</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-serif font-bold mb-4">Contact</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>+91 93043 35185</li>
-                <li>hello@chaicraft.com</li>
-                <li>123 Tea Garden Road</li>
+                <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
+                <li><Link href="/menu" className="hover:text-primary transition-colors">Our Menu</Link></li>
+                <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-serif font-bold mb-4">Hours</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
                 <li>Mon - Fri: 8am - 9pm</li>
                 <li>Sat - Sun: 9am - 10pm</li>
+              </ul>
+              
+              <h4 className="font-serif font-bold mb-4">Contact Us</h4>
+              <div className="flex gap-4">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="YouTube">
+                  <Youtube className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="Facebook">
+                  <Facebook className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="Instagram">
+                  <Instagram className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="WhatsApp Channel">
+                  <MessageCircle className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-serif font-bold mb-4">Support</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>+91 93043 35185</li>
+                <li>hello@chaicraft.com</li>
+                <li>123 Tea Garden Road</li>
               </ul>
             </div>
           </div>
