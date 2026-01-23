@@ -146,11 +146,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <h4 className="font-serif font-bold mb-4">Hours</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
+              <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>Mon - Fri: 8am - 9pm</li>
                 <li>Sat - Sun: 9am - 10pm</li>
               </ul>
-              
+            </div>
+            <div>
+              <h4 className="font-serif font-bold mb-4">Support</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
+                <li>+91 93043 35185</li>
+                <li>hello@chaicraft.com</li>
+                <li>123 Tea Garden Road</li>
+              </ul>
+
+              <h4 className="font-serif font-bold mb-4">Contact Us</h4>
               <div className="flex gap-4">
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="YouTube">
                   <Youtube className="h-5 w-5" />
@@ -165,14 +174,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <MessageCircle className="h-5 w-5" />
                 </a>
               </div>
-            </div>
-            <div>
-              <h4 className="font-serif font-bold mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>+91 93043 35185</li>
-                <li>hello@chaicraft.com</li>
-                <li>123 Tea Garden Road</li>
-              </ul>
             </div>
           </div>
           <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
