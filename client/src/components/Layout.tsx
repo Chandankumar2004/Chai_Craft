@@ -159,12 +159,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Contact + Support */}
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Contact Us */}
         <div>
-          <h4 className="font-serif font-bold mb-3">Contact Us</h4>
-          <div className="flex justify-center md:justify-start gap-4">
-
+          <h4 className="font-serif font-bold mb-1">Contact Us</h4>
+          {/* <div className="flex justify-center md:justify-start gap-4"> */}
+             <div className="flex items-center gap-4 text-muted-foreground">
             <a
               href="https://www.youtube.com"
               target="_blank"
@@ -203,7 +203,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Support */}
         <div>
-          <h4 className="font-serif font-bold mb-3">Support</h4>
+          {/* <h4 className="font-serif font-bold mb-3">Support</h4> */}
+          <h4 className="font-serif font-bold mb-1 mt-2">Support</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li>
               <a href="tel:+919304335185" className="hover:text-primary">
