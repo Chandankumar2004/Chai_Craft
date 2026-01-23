@@ -151,7 +151,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <li>Sat - Sun: 9am - 10pm</li>
               </ul>
               
-              <h4 className="font-serif font-bold mb-4">Contact Us</h4>
               <div className="flex gap-4">
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="YouTube">
                   <Youtube className="h-5 w-5" />
