@@ -125,18 +125,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      <footer className="border-t bg-muted/30 mt-auto">
+<footer className="border-t bg-muted/30 mt-auto">
   <div className="container mx-auto px-4 py-12">
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-8 text-center md:text-left">
 
       {/* Brand */}
       <div className="space-y-4 md:col-span-2">
-        <div className="flex items-center gap-2">
-          <span className="font-serif text-xl font-bold text-primary">
-            Chai Craft
-          </span>
-        </div>
-        <p className="text-muted-foreground text-sm max-w-xs">
+        <span className="font-serif text-xl font-bold text-primary">
+          Chai Craft
+        </span>
+        <p className="text-muted-foreground text-sm max-w-xs mx-auto md:mx-0">
           Brewing moments of joy, one cup at a time. Authentic flavors, premium ingredients.
         </p>
       </div>
@@ -160,23 +158,63 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </ul>
       </div>
 
-      {/* Contact + Support (ONE COLUMN) */}
-      <div className="space-y-8">
+      {/* Contact + Support */}
+      <div className="space-y-6">
+        {/* Contact Us */}
         <div>
-          <h4 className="font-serif font-bold mb-4">Contact Us</h4>
-          <div className="flex gap-4">
-            <Youtube className="h-5 w-5 text-muted-foreground hover:text-primary" />
-            <Facebook className="h-5 w-5 text-muted-foreground hover:text-primary" />
-            <Instagram className="h-5 w-5 text-muted-foreground hover:text-primary" />
-            <MessageCircle className="h-5 w-5 text-muted-foreground hover:text-primary" />
+          <h4 className="font-serif font-bold mb-3">Contact Us</h4>
+          <div className="flex justify-center md:justify-start gap-4">
+
+            <a
+              href="https://www.youtube.com"
+              target="_blank"
+              className="text-muted-foreground hover:text-primary transition-transform duration-300 hover:scale-110"
+            >
+              <Youtube className="h-5 w-5" />
+            </a>
+
+            <a
+              href="https://www.facebook.com/chandan123456kumar"
+              target="_blank"
+              className="text-muted-foreground hover:text-primary transition-transform duration-300 hover:scale-110"
+            >
+              <Facebook className="h-5 w-5" />
+            </a>
+
+            <a
+              href="https://www.instagram.com"
+              target="_blank"
+              className="text-muted-foreground hover:text-primary transition-transform duration-300 hover:scale-110"
+            >
+              <Instagram className="h-5 w-5" />
+            </a>
+
+            {/* WhatsApp Chat */}
+            <a
+              href="https://wa.me/919304335185"
+              target="_blank"
+              className="text-muted-foreground hover:text-primary transition-transform duration-300 hover:scale-110"
+            >
+              <MessageCircle className="h-5 w-5" />
+            </a>
+
           </div>
         </div>
 
+        {/* Support */}
         <div>
-          <h4 className="font-serif font-bold mb-4">Support</h4>
+          <h4 className="font-serif font-bold mb-3">Support</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>+91 93043 35185</li>
-            <li>hello@chaicraft.com</li>
+            <li>
+              <a href="tel:+919304335185" className="hover:text-primary">
+                +91 93043 35185
+              </a>
+            </li>
+            <li>
+              <a href="mailto:hello@chaicraft.com" className="hover:text-primary">
+                hello@chaicraft.com
+              </a>
+            </li>
             <li>123 Tea Garden Road.</li>
           </ul>
         </div>
@@ -184,11 +222,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
     </div>
 
+    {/* Bottom bar */}
     <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
       © {new Date().getFullYear()} Chai Craft. All rights reserved.
     </div>
   </div>
 </footer>
+
 
     </div>
   );
