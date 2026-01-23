@@ -172,7 +172,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <ul className="space-y-2 text-sm text-muted-foreground mb-6">
                 <li>+91 93043 35185</li>
                 <li>hello@chaicraft.com</li>
-                <li>123 Tea Garden Road</li>
+                <li>123 Tea Garden Road.</li>
               </ul>
               
             </div>
