@@ -126,42 +126,58 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       <footer className="border-t bg-muted/30 mt-auto">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-wrap items-center justify-between gap-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <span className="font-serif font-bold text-primary">Chai Craft</span>
-            </div>
-            
-            <div className="flex items-center gap-6">
-              <div className="flex gap-4">
-                <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-                <Link href="/menu" className="hover:text-primary transition-colors">Menu</Link>
-                <Link href="/about" className="hover:text-primary transition-colors">About</Link>
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8">
+            <div className="space-y-4 lg:col-span-2">
+              <div className="flex items-center gap-2">
+                 <span className="font-serif text-xl font-bold text-primary">Chai Craft</span>
               </div>
+              <p className="text-muted-foreground text-sm max-w-xs">
+                Brewing moments of joy, one cup at a time. Authentic flavors, premium ingredients.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-serif font-bold mb-4">Quick Links</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
+                <li><Link href="/menu" className="hover:text-primary transition-colors">Our Menu</Link></li>
+                <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-serif font-bold mb-4">Hours</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
+                <li>Mon - Fri: 8am - 9pm</li>
+                <li>Sat - Sun: 9am - 10pm</li>
+              </ul>
               
-              <div className="h-4 w-px bg-border hidden sm:block" />
-              
+              <h4 className="font-serif font-bold mb-4">Contact Us</h4>
               <div className="flex gap-4">
-                <span className="font-medium text-foreground">Hours:</span>
-                <span>Mon-Fri 8-9, Sat-Sun 9-10</span>
-              </div>
-
-              <div className="h-4 w-px bg-border hidden sm:block" />
-
-              <div className="flex items-center gap-4">
-                <span className="font-medium text-foreground">Contact Us:</span>
-                <div className="flex gap-3">
-                  <a href="#" className="hover:text-primary transition-colors" title="YouTube"><Youtube className="h-4 w-4" /></a>
-                  <a href="#" className="hover:text-primary transition-colors" title="Facebook"><Facebook className="h-4 w-4" /></a>
-                  <a href="#" className="hover:text-primary transition-colors" title="Instagram"><Instagram className="h-4 w-4" /></a>
-                  <a href="#" className="hover:text-primary transition-colors" title="WhatsApp"><MessageCircle className="h-4 w-4" /></a>
-                </div>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="YouTube">
+                  <Youtube className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="Facebook">
+                  <Facebook className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="Instagram">
+                  <Instagram className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors" title="WhatsApp Channel">
+                  <MessageCircle className="h-5 w-5" />
+                </a>
               </div>
             </div>
-
-            <div className="ml-auto">
-              © {new Date().getFullYear()} Chai Craft
+            <div>
+              <h4 className="font-serif font-bold mb-4">Support</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>+91 93043 35185</li>
+                <li>hello@chaicraft.com</li>
+                <li>123 Tea Garden Road</li>
+              </ul>
             </div>
+          </div>
+          <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Chai Craft. All rights reserved.
           </div>
         </div>
       </footer>
