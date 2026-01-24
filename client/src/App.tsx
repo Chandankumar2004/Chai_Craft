@@ -11,6 +11,7 @@ import Auth from "@/pages/Auth";
 import Checkout from "@/pages/Checkout";
 import Profile from "@/pages/Profile";
 import Admin from "@/pages/Admin";
+import About from "@/pages/About";
 
 function Router() {
   return (
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/checkout" component={Checkout} />
       <Route path="/profile" component={Profile} />
       <Route path="/admin" component={Admin} />
+      <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>
   );
