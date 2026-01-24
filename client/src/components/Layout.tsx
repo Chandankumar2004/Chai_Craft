@@ -159,23 +159,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </div>
         {/* Support */}
       <div className="space-y-3">
-  <div>
-    <h4 className="font-serif font-bold mb-1">Contact Us</h4>
-    <div className="flex items-center gap-4 text-muted-foreground">
-      <a href="https://www.youtube.com" target="_blank" className="hover:text-primary transition-transform hover:scale-110">
-        <Youtube className="h-5 w-5" />
-      </a>
-      <a href="https://www.facebook.com/chandan123456kumar" target="_blank" className="hover:text-primary transition-transform hover:scale-110">
-        <Facebook className="h-5 w-5" />
-      </a>
-      <a href="https://www.instagram.com" target="_blank" className="hover:text-primary transition-transform hover:scale-110">
-        <Instagram className="h-5 w-5" />
-      </a>
-      <a href="https://wa.me/919304335185" target="_blank" className="hover:text-primary transition-transform hover:scale-110">
-        <MessageCircle className="h-5 w-5" />
-      </a>
-    </div>
-  </div>
         <div>
           {/* <h4 className="font-serif font-bold mb-3">Support</h4> */}
           <h4 className="font-serif font-bold mb-1 mt-2">Support</h4>
