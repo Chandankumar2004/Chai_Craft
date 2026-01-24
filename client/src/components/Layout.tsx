@@ -133,10 +133,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 <footer className="border-t bg-muted/30 mt-auto">
   <div className="container mx-auto px-4 py-12">
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-8 text-center md:text-left">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 text-center md:text-left">
 
       {/* Brand */}
-      <div className="space-y-4 md:col-span-1">
+      <div className="space-y-4 md:col-span-1 lg:col-span-1">
         <span className="font-serif text-xl font-bold text-primary">
           Chai Craft
         </span>
@@ -147,7 +147,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Quick Links */}
       <div>
-        <h4 className="font-serif font-bold mb-4">Quick Links</h4>
+        <h4 className="font-serif font-bold mb-4 text-foreground">Quick Links</h4>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li>
             <button 
@@ -165,6 +165,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
               Our Menu
             </button>
           </li>
+        </ul>
+      </div>
+
+      {/* About Section */}
+      <div>
+        <h4 className="font-serif font-bold mb-4 text-foreground">About</h4>
+        <ul className="space-y-2 text-sm text-muted-foreground">
           <li>
             <button 
               onClick={() => handleLinkClick("/about")}
@@ -173,12 +180,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
               About Us
             </button>
           </li>
+          <li><button className="hover:text-primary transition-colors cursor-pointer">Contact Us</button></li>
+          <li><button className="hover:text-primary transition-colors cursor-pointer">Careers</button></li>
+          <li><button className="hover:text-primary transition-colors cursor-pointer">Security</button></li>
+          <li><button className="hover:text-primary transition-colors cursor-pointer">Terms & Conditions</button></li>
         </ul>
       </div>
 
       {/* Hours */}
       <div>
-        <h4 className="font-serif font-bold mb-4">Hours</h4>
+        <h4 className="font-serif font-bold mb-4 text-foreground">Hours</h4>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li>Mon - Fri: 8am - 9pm</li>
           <li>Sat - Sun: 9am - 10pm</li>
@@ -187,15 +198,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Support */}
       <div>
-        <h4 className="font-serif font-bold mb-4">Support</h4>
+        <h4 className="font-serif font-bold mb-4 text-foreground">Support</h4>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li>
-            <a href="tel:+919304335185" className="hover:text-primary">
+            <a href="tel:+919304335185" className="hover:text-primary transition-colors">
               +91 93043 35185
             </a>
           </li>
           <li>
-            <a href="mailto:hello@chaicraft.com" className="hover:text-primary">
+            <a href="mailto:hello@chaicraft.com" className="hover:text-primary transition-colors">
               hello@chaicraft.com
             </a>
           </li>
@@ -203,9 +214,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </ul>
       </div>
 
-      {/* Contact Us */}
+      {/* Contact Us (Social) */}
       <div>
-        <h4 className="font-serif font-bold mb-4">Contact Us</h4>
+        <h4 className="font-serif font-bold mb-4 text-foreground">Social</h4>
         <div className="flex items-center justify-center md:justify-start gap-4 text-muted-foreground">
           <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110">
             <Youtube className="h-5 w-5" />
