@@ -130,7 +130,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <div className="grid grid-cols-1 md:grid-cols-5 gap-8 text-center md:text-left">
 
       {/* Brand */}
-      <div className="space-y-4 md:col-span-2">
+      <div className="space-y-4 md:col-span-1">
         <span className="font-serif text-xl font-bold text-primary">
           Chai Craft
         </span>
@@ -157,24 +157,41 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <li>Sat - Sun: 9am - 10pm</li>
         </ul>
       </div>
-        {/* Support */}
-      <div className="space-y-3">
-        <div>
-          {/* <h4 className="font-serif font-bold mb-3">Support</h4> */}
-          <h4 className="font-serif font-bold mb-1 mt-2">Support</h4>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>
-              <a href="tel:+919304335185" className="hover:text-primary">
-                +91 93043 35185
-              </a>
-            </li>
-            <li>
-              <a href="mailto:hello@chaicraft.com" className="hover:text-primary">
-                hello@chaicraft.com
-              </a>
-            </li>
-            <li>123 Tea Garden Road.</li>
-          </ul>
+
+      {/* Support */}
+      <div>
+        <h4 className="font-serif font-bold mb-4">Support</h4>
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          <li>
+            <a href="tel:+919304335185" className="hover:text-primary">
+              +91 93043 35185
+            </a>
+          </li>
+          <li>
+            <a href="mailto:hello@chaicraft.com" className="hover:text-primary">
+              hello@chaicraft.com
+            </a>
+          </li>
+          <li>123 Tea Garden Road.</li>
+        </ul>
+      </div>
+
+      {/* Contact Us */}
+      <div>
+        <h4 className="font-serif font-bold mb-4">Contact Us</h4>
+        <div className="flex items-center justify-center md:justify-start gap-4 text-muted-foreground">
+          <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110">
+            <Youtube className="h-5 w-5" />
+          </a>
+          <a href="https://www.facebook.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110">
+            <Facebook className="h-5 w-5" />
+          </a>
+          <a href="https://www.instagram.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110">
+            <Instagram className="h-5 w-5" />
+          </a>
+          <a href="https://wa.me/919304335185" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110">
+            <MessageCircle className="h-5 w-5" />
+          </a>
         </div>
       </div>
 
