@@ -1,7 +1,7 @@
-import { users, products, orders, orderItems } from "@shared/schema";
+import { users, products, orders, orderItems, jobs, messages } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
-import type { InsertUser, InsertProduct, InsertOrder, InsertOrderItem } from "@shared/schema";
+import type { InsertUser, InsertProduct, InsertOrder, InsertOrderItem, InsertJob, InsertMessage } from "@shared/schema";
 
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -29,6 +29,14 @@ export interface IStorage {
   getOrders(userId?: number): Promise<(typeof orders.$inferSelect & { items: typeof orderItems.$inferSelect[] })[]>;
   getAllOrders(): Promise<(typeof orders.$inferSelect & { user: typeof users.$inferSelect })[]>; // Admin
   updateOrderStatus(id: number, status: string, paymentStatus?: string): Promise<typeof orders.$inferSelect>;
+
+  // Jobs
+  getJobs(): Promise<(typeof jobs.$inferSelect)[]>;
+  createJob(job: InsertJob): Promise<typeof jobs.$inferSelect>;
+  deleteJob(id: number): Promise<void>;
+
+  // Messages
+  createMessage(message: InsertMessage): Promise<typeof messages.$inferSelect>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -126,6 +134,24 @@ export class DatabaseStorage implements IStorage {
     
     const [updated] = await db.update(orders).set(updates).where(eq(orders.id, id)).returning();
     return updated;
+  }
+
+  async getJobs() {
+    return await db.select().from(jobs).orderBy(desc(jobs.createdAt));
+  }
+
+  async createJob(job: InsertJob) {
+    const [newJob] = await db.insert(jobs).values(job).returning();
+    return newJob;
+  }
+
+  async deleteJob(id: number) {
+    await db.delete(jobs).where(eq(jobs.id, id));
+  }
+
+  async createMessage(message: InsertMessage) {
+    const [newMessage] = await db.insert(messages).values(message).returning();
+    return newMessage;
   }
 }
 

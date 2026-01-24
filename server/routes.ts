@@ -84,12 +84,29 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  app.patch("/api/orders/:id/status", async (req, res) => {
+  // Jobs
+  app.get("/api/jobs", async (req, res) => {
+    const jobs = await storage.getJobs();
+    res.json(jobs);
+  });
+
+  app.post("/api/jobs", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") return res.sendStatus(403);
+    const job = await storage.createJob(req.body);
+    res.status(201).json(job);
+  });
+
+  app.delete("/api/jobs/:id", async (req, res) => {
     if (!req.isAuthenticated() || req.user.role !== "admin") return res.sendStatus(403);
     const id = parseInt(req.params.id);
-    const { status, paymentStatus } = req.body;
-    const updated = await storage.updateOrderStatus(id, status, paymentStatus);
-    res.json(updated);
+    await storage.deleteJob(id);
+    res.sendStatus(200);
+  });
+
+  // Messages
+  app.post("/api/messages", async (req, res) => {
+    const message = await storage.createMessage(req.body);
+    res.status(201).json(message);
   });
 
   return httpServer;

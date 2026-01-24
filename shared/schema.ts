@@ -27,6 +27,34 @@ export const products = pgTable("products", {
   isBestSeller: boolean("is_best_seller").default(false),
 });
 
+export const jobs = pgTable("jobs", {
+  id: serial("id").primaryKey(),
+  role: text("role").notNull(),
+  description: text("description").notNull(),
+  location: text("location").notNull(),
+  type: text("type").notNull(), // 'Full-time' | 'Part-time'
+  salary: text("salary"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  message: text("message").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Schemas
+export const insertJobSchema = createInsertSchema(jobs).omit({ id: true, createdAt: true });
+export const insertMessageSchema = createInsertSchema(messages).omit({ id: true, createdAt: true });
+
+// Types
+export type Job = typeof jobs.$inferSelect;
+export type InsertJob = z.infer<typeof insertJobSchema>;
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = z.infer<typeof insertMessageSchema>;
+
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),

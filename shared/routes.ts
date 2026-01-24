@@ -117,4 +117,55 @@ export const api = {
       },
     },
   },
+  jobs: {
+    list: {
+      method: 'GET' as const,
+      path: '/api/jobs',
+      responses: {
+        200: z.array(z.object({
+          id: z.number(),
+          role: z.string(),
+          description: z.string(),
+          location: z.string(),
+          type: z.string(),
+          salary: z.string().nullable(),
+        })),
+      },
+    },
+    create: {
+      method: 'POST' as const,
+      path: '/api/jobs',
+      input: z.object({
+        role: z.string(),
+        description: z.string(),
+        location: z.string(),
+        type: z.string(),
+        salary: z.string().optional(),
+      }),
+      responses: {
+        201: z.object({ id: z.number() }),
+      },
+    },
+    delete: {
+      method: 'DELETE' as const,
+      path: '/api/jobs/:id',
+      responses: {
+        200: z.void(),
+      },
+    },
+  },
+  messages: {
+    create: {
+      method: 'POST' as const,
+      path: '/api/messages',
+      input: z.object({
+        name: z.string(),
+        email: z.string(),
+        message: z.string(),
+      }),
+      responses: {
+        201: z.object({ id: z.number() }),
+      },
+    },
+  },
 };

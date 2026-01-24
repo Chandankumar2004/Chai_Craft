@@ -12,6 +12,7 @@ import Checkout from "@/pages/Checkout";
 import Profile from "@/pages/Profile";
 import Admin from "@/pages/Admin";
 import About from "@/pages/About";
+import Careers from "@/pages/Careers";
 
 function Router() {
   return (
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/admin" component={Admin} />
       <Route path="/about" component={About} />
+      <Route path="/careers" component={Careers} />
       <Route component={NotFound} />
     </Switch>
   );
