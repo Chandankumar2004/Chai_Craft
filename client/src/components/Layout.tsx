@@ -143,9 +143,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <div>
         <h4 className="font-serif font-bold mb-4">Quick Links</h4>
         <ul className="space-y-2 text-sm text-muted-foreground">
-          <li><Link href="/" className="hover:text-primary">Home</Link></li>
-          <li><Link href="/menu" className="hover:text-primary">Our Menu</Link></li>
-          <li><Link href="/about" className="hover:text-primary">About Us</Link></li>
+          <li><Link href="/" className="hover:text-primary transition-colors cursor-pointer">Home</Link></li>
+          <li><Link href="/menu" className="hover:text-primary transition-colors cursor-pointer">Our Menu</Link></li>
+          <li><Link href="/about" className="hover:text-primary transition-colors cursor-pointer">About Us</Link></li>
         </ul>
       </div>
 
