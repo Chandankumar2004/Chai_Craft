@@ -51,12 +51,32 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const messageMutation = useMutation({
     mutationFn: async (data: any) => {
+      // Use Formspree endpoint for message submission
+      const response = await fetch("https://formspree.io/f/mvzajvpq", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        throw new Error("Failed to send message via Formspree");
+      }
+      // Also save to our local database for admin visibility
       await apiRequest("POST", "/api/messages", data);
     },
     onSuccess: () => {
       toast({ title: "Message Sent", description: "We'll get back to you soon!" });
       setShowContactDialog(false);
       form.reset();
+    },
+    onError: () => {
+      toast({ 
+        title: "Error", 
+        description: "Failed to send message. Please try again later.",
+        variant: "destructive"
+      });
     }
   });
 
@@ -81,7 +101,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
 
-          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/" className={`text-sm font-medium hover:text-primary transition-colors ${location === '/' ? 'text-primary' : 'text-muted-foreground'}`}>
               Home
@@ -98,7 +117,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
           <div className="flex items-center gap-4">
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 hover:text-primary">
+              <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 hover:text-primary" data-testid="button-cart">
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-bold shadow-sm">
@@ -111,7 +130,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full overflow-hidden border border-border">
+                  <Button variant="ghost" size="icon" className="rounded-full overflow-hidden border border-border" data-testid="button-user">
                     <UserIcon className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -139,14 +158,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button className="font-semibold shadow-md shadow-primary/20">Login</Button>
+                <Button className="font-semibold shadow-md shadow-primary/20" data-testid="button-login">Login</Button>
               </Link>
             )}
 
-            {/* Mobile Menu */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <Button variant="ghost" size="icon" className="md:hidden" data-testid="button-mobile-menu">
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
@@ -174,7 +192,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      {/* Contact Dialog */}
       <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
         <DialogContent>
           <DialogHeader>
@@ -189,7 +206,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
+                    <FormControl><Input {...field} data-testid="input-contact-name" /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -200,7 +217,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
-                    <FormControl><Input type="email" {...field} /></FormControl>
+                    <FormControl><Input type="email" {...field} data-testid="input-contact-email" /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -211,12 +228,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Message</FormLabel>
-                    <FormControl><Textarea {...field} /></FormControl>
+                    <FormControl><Textarea {...field} data-testid="input-contact-message" /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={messageMutation.isPending}>
+              <Button type="submit" className="w-full" disabled={messageMutation.isPending} data-testid="button-contact-submit">
                 {messageMutation.isPending ? "Sending..." : "Send Message"}
               </Button>
             </form>
@@ -224,7 +241,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </DialogContent>
       </Dialog>
 
-      {/* Security Popup */}
       {showSecurityPopup && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
           <Card className="w-80 p-6 shadow-2xl border-primary border-2 bg-background pointer-events-auto animate-in fade-in zoom-in duration-300">
@@ -242,7 +258,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      {/* Terms Popup */}
       {showTermsPopup && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
           <Card className="w-80 p-6 shadow-2xl border-primary border-2 bg-background pointer-events-auto animate-in fade-in zoom-in duration-300">
@@ -267,8 +282,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <footer className="border-t bg-muted/30 mt-auto">
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 text-center md:text-left">
-
-            {/* Brand */}
             <div className="space-y-4 md:col-span-1 lg:col-span-1">
               <span className="font-serif text-xl font-bold text-primary">
                 Chai Craft
@@ -278,7 +291,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </p>
             </div>
 
-            {/* Quick Links */}
             <div>
               <h4 className="font-serif font-bold mb-4 text-foreground">Quick Links</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
@@ -286,6 +298,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <button 
                     onClick={() => handleLinkClick("/")}
                     className="hover:text-primary transition-colors cursor-pointer"
+                    data-testid="link-footer-home"
                   >
                     Home
                   </button>
@@ -294,6 +307,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <button 
                     onClick={() => handleLinkClick("/menu")}
                     className="hover:text-primary transition-colors cursor-pointer"
+                    data-testid="link-footer-menu"
                   >
                     Our Menu
                   </button>
@@ -301,7 +315,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </ul>
             </div>
 
-            {/* About Section */}
             <div>
               <h4 className="font-serif font-bold mb-4 text-foreground">About</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
@@ -309,18 +322,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <button 
                     onClick={() => handleLinkClick("/about")}
                     className="hover:text-primary transition-colors cursor-pointer text-left"
+                    data-testid="link-footer-about"
                   >
                     About Us
                   </button>
                 </li>
-                <li><button onClick={() => setShowContactDialog(true)} className="hover:text-primary transition-colors cursor-pointer text-left">Contact Us</button></li>
-                <li><button onClick={() => handleLinkClick("/careers")} className="hover:text-primary transition-colors cursor-pointer text-left">Careers</button></li>
-                <li><button onClick={() => setShowSecurityPopup(true)} className="hover:text-primary transition-colors cursor-pointer text-left">Security</button></li>
-                <li><button onClick={() => setShowTermsPopup(true)} className="hover:text-primary transition-colors cursor-pointer text-left text-nowrap">Terms & Conditions</button></li>
+                <li><button onClick={() => setShowContactDialog(true)} className="hover:text-primary transition-colors cursor-pointer text-left" data-testid="link-footer-contact">Contact Us</button></li>
+                <li><button onClick={() => handleLinkClick("/careers")} className="hover:text-primary transition-colors cursor-pointer text-left" data-testid="link-footer-careers">Careers</button></li>
+                <li><button onClick={() => setShowSecurityPopup(true)} className="hover:text-primary transition-colors cursor-pointer text-left" data-testid="link-footer-security">Security</button></li>
+                <li><button onClick={() => setShowTermsPopup(true)} className="hover:text-primary transition-colors cursor-pointer text-left text-nowrap" data-testid="link-footer-terms">Terms & Conditions</button></li>
               </ul>
             </div>
 
-            {/* Hours */}
             <div>
               <h4 className="font-serif font-bold mb-4 text-foreground">Hours</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
@@ -329,7 +342,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </ul>
             </div>
 
-            {/* Support */}
             <div>
               <h4 className="font-serif font-bold mb-4 text-foreground">Support</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
@@ -347,25 +359,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </ul>
             </div>
 
-            {/* Contact Us (Social) */}
             <div>
               <h4 className="font-serif font-bold mb-4 text-foreground">Social</h4>
               <div className="flex items-center justify-center md:justify-start gap-4 text-muted-foreground">
-                <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110">
+                <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110" data-testid="link-social-youtube">
                   <Youtube className="h-5 w-5" />
                 </a>
-                <a href="https://www.facebook.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110">
+                <a href="https://www.facebook.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110" data-testid="link-social-facebook">
                   <Facebook className="h-5 w-5" />
                 </a>
-                <a href="https://www.instagram.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110">
+                <a href="https://www.instagram.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110" data-testid="link-social-instagram">
                   <Instagram className="h-5 w-5" />
                 </a>
-                <a href="https://wa.me/919304335185" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110">
+                <a href="https://wa.me/919304335185" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110" data-testid="link-social-whatsapp">
                   <MessageCircle className="h-5 w-5" />
                 </a>
               </div>
             </div>
-
           </div>
 
           <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
