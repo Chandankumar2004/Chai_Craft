@@ -63,8 +63,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       if (!response.ok) {
         throw new Error("Failed to send message via Formspree");
       }
-      // Also save to our local database for admin visibility
-      await apiRequest("POST", "/api/messages", data);
     },
     onSuccess: () => {
       toast({ title: "Message Sent", description: "We'll get back to you soon!" });
