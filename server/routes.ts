@@ -46,7 +46,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     // items: { productId: number, quantity: number }[]
-    const { items, deliveryAddress, totalAmount } = req.body;
+    const { items, deliveryAddress, totalAmount, promoCode, giftCardCode, discountAmount } = req.body;
     
     // Validate stock and calculate price (simplified)
     const orderItemsData = [];
@@ -63,6 +63,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const order = await storage.createOrder({
       userId: (req.user as any).id,
       totalAmount,
+      discountAmount: discountAmount || 0,
+      promoCode: promoCode || null,
+      giftCardCode: giftCardCode || null,
       deliveryAddress,
       paymentMethod: "UPI",
       status: "pending",
