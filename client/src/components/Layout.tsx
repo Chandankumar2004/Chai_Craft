@@ -20,11 +20,15 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 
+import { useLanguage } from "@/hooks/use-language";
+import { Languages } from "lucide-react";
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const { data: user } = useUser();
   const { mutate: logout } = useLogout();
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
+  const { t, language, setLanguage } = useLanguage();
 
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showSecurityPopup, setShowSecurityPopup] = useState(false);
@@ -65,7 +69,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       }
     },
     onSuccess: () => {
-      toast({ title: "Message Sent", description: "We'll get back to you soon!" });
+      toast({ title: t("contact.title"), description: "We'll get back to you soon!" });
       setShowContactDialog(false);
       form.reset();
     },
@@ -101,19 +105,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/" className={`text-sm font-medium hover:text-primary transition-colors ${location === '/' ? 'text-primary' : 'text-muted-foreground'}`}>
-              Home
+              {t("nav.home")}
             </Link>
             <Link href="/menu" className={`text-sm font-medium hover:text-primary transition-colors ${location === '/menu' ? 'text-primary' : 'text-muted-foreground'}`}>
-              Menu
+              {t("nav.menu")}
             </Link>
             {user?.role === 'admin' && (
               <Link href="/admin" className={`text-sm font-medium hover:text-primary transition-colors ${location.startsWith('/admin') ? 'text-primary' : 'text-muted-foreground'}`}>
-                Dashboard
+                {t("nav.dashboard")}
               </Link>
             )}
           </nav>
 
           <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLanguage(language === "en" ? "hi" : "en")}
+              className="flex items-center gap-2 hover:bg-primary/10"
+              data-testid="button-language-switch"
+            >
+              <Languages className="h-4 w-4" />
+              <span className="text-xs font-bold uppercase">{language}</span>
+            </Button>
+
             <Link href="/cart">
               <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 hover:text-primary" data-testid="button-cart">
                 <ShoppingCart className="h-5 w-5" />
@@ -141,22 +156,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   </div>
                   <DropdownMenuItem asChild>
                     <Link href="/profile" className="cursor-pointer w-full flex items-center">
-                      <UserIcon className="mr-2 h-4 w-4" /> Profile
+                      <UserIcon className="mr-2 h-4 w-4" /> {t("nav.profile")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/profile" className="cursor-pointer w-full flex items-center">
-                      <Package className="mr-2 h-4 w-4" /> Orders
+                      <Package className="mr-2 h-4 w-4" /> {t("nav.orders")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => logout()} className="text-destructive focus:text-destructive cursor-pointer">
-                    <LogOut className="mr-2 h-4 w-4" /> Log out
+                    <LogOut className="mr-2 h-4 w-4" /> {t("nav.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button className="font-semibold shadow-md shadow-primary/20" data-testid="button-login">Login</Button>
+                <Button className="font-semibold shadow-md shadow-primary/20" data-testid="button-login">{t("nav.login")}</Button>
               </Link>
             )}
 
@@ -168,19 +183,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </SheetTrigger>
               <SheetContent>
                 <div className="flex flex-col gap-6 mt-10">
-                  <Link href="/" className="text-lg font-medium">Home</Link>
-                  <Link href="/menu" className="text-lg font-medium">Menu</Link>
-                  <Link href="/cart" className="text-lg font-medium">Cart ({cartCount})</Link>
+                  <Link href="/" className="text-lg font-medium">{t("nav.home")}</Link>
+                  <Link href="/menu" className="text-lg font-medium">{t("nav.menu")}</Link>
+                  <Link href="/cart" className="text-lg font-medium">{t("nav.cart")} ({cartCount})</Link>
                   {user?.role === 'admin' && (
-                    <Link href="/admin" className="text-lg font-medium text-primary">Admin Dashboard</Link>
+                    <Link href="/admin" className="text-lg font-medium text-primary">{t("nav.dashboard")}</Link>
                   )}
                   {user ? (
                     <Button variant="outline" onClick={() => logout()} className="justify-start">
-                      Log Out
+                      {t("nav.logout")}
                     </Button>
                   ) : (
                     <Link href="/auth">
-                      <Button className="w-full">Login / Register</Button>
+                      <Button className="w-full">{t("nav.login")}</Button>
                     </Link>
                   )}
                 </div>
@@ -193,8 +208,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Contact Us</DialogTitle>
-            <DialogDescription>Send us a message and we'll respond shortly.</DialogDescription>
+            <DialogTitle>{t("contact.title")}</DialogTitle>
+            <DialogDescription>{t("contact.desc")}</DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit((data) => messageMutation.mutate(data))} className="space-y-4">
@@ -203,7 +218,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("contact.name")}</FormLabel>
                     <FormControl><Input {...field} data-testid="input-contact-name" /></FormControl>
                     <FormMessage />
                   </FormItem>
@@ -214,7 +229,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("contact.email")}</FormLabel>
                     <FormControl><Input type="email" {...field} data-testid="input-contact-email" /></FormControl>
                     <FormMessage />
                   </FormItem>
@@ -225,14 +240,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 name="message"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Message</FormLabel>
+                    <FormLabel>{t("contact.message")}</FormLabel>
                     <FormControl><Textarea {...field} data-testid="input-contact-message" /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <Button type="submit" className="w-full" disabled={messageMutation.isPending} data-testid="button-contact-submit">
-                {messageMutation.isPending ? "Sending..." : "Send Message"}
+                {messageMutation.isPending ? t("contact.sending") : t("contact.send")}
               </Button>
             </form>
           </Form>
@@ -244,7 +259,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <Card className="w-80 p-6 shadow-2xl border-primary border-2 bg-background pointer-events-auto animate-in fade-in zoom-in duration-300">
             <div className="flex items-center gap-3 mb-4 text-primary">
               <Shield className="h-6 w-6" />
-              <h3 className="font-bold text-lg">Security First</h3>
+              <h3 className="font-bold text-lg">{t("security.title")}</h3>
             </div>
             <ul className="text-sm space-y-2 text-muted-foreground">
               <li>• Encrypted UPI transactions</li>
@@ -261,7 +276,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <Card className="w-80 p-6 shadow-2xl border-primary border-2 bg-background pointer-events-auto animate-in fade-in zoom-in duration-300">
             <div className="flex items-center gap-3 mb-4 text-primary">
               <FileText className="h-6 w-6" />
-              <h3 className="font-bold text-lg">Terms & Conditions</h3>
+              <h3 className="font-bold text-lg">{t("terms.title")}</h3>
             </div>
             <ul className="text-sm space-y-2 text-muted-foreground">
               <li>• All orders are final</li>
@@ -285,12 +300,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 Chai Craft
               </span>
               <p className="text-muted-foreground text-sm max-w-xs mx-auto md:mx-0">
-                Brewing moments of joy, one cup at a time. Authentic flavors, premium ingredients.
+                {t("footer.tagline")}
               </p>
             </div>
 
             <div>
-              <h4 className="font-serif font-bold mb-4 text-foreground">Quick Links</h4>
+              <h4 className="font-serif font-bold mb-4 text-foreground">{t("footer.quicklinks")}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <button 
@@ -298,7 +313,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     className="hover:text-primary transition-colors cursor-pointer"
                     data-testid="link-footer-home"
                   >
-                    Home
+                    {t("nav.home")}
                   </button>
                 </li>
                 <li>
@@ -307,14 +322,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     className="hover:text-primary transition-colors cursor-pointer"
                     data-testid="link-footer-menu"
                   >
-                    Our Menu
+                    {t("nav.menu")}
                   </button>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-serif font-bold mb-4 text-foreground">About</h4>
+              <h4 className="font-serif font-bold mb-4 text-foreground">{t("footer.about")}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <button 
@@ -322,18 +337,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     className="hover:text-primary transition-colors cursor-pointer text-left"
                     data-testid="link-footer-about"
                   >
-                    About Us
+                    {t("footer.about")}
                   </button>
                 </li>
-                <li><button onClick={() => setShowContactDialog(true)} className="hover:text-primary transition-colors cursor-pointer text-left" data-testid="link-footer-contact">Contact Us</button></li>
-                <li><button onClick={() => handleLinkClick("/careers")} className="hover:text-primary transition-colors cursor-pointer text-left" data-testid="link-footer-careers">Careers</button></li>
-                <li><button onClick={() => setShowSecurityPopup(true)} className="hover:text-primary transition-colors cursor-pointer text-left" data-testid="link-footer-security">Security</button></li>
-                <li><button onClick={() => setShowTermsPopup(true)} className="hover:text-primary transition-colors cursor-pointer text-left text-nowrap" data-testid="link-footer-terms">Terms & Conditions</button></li>
+                <li><button onClick={() => setShowContactDialog(true)} className="hover:text-primary transition-colors cursor-pointer text-left" data-testid="link-footer-contact">{t("footer.contact")}</button></li>
+                <li><button onClick={() => handleLinkClick("/careers")} className="hover:text-primary transition-colors cursor-pointer text-left" data-testid="link-footer-careers">{t("footer.careers")}</button></li>
+                <li><button onClick={() => setShowSecurityPopup(true)} className="hover:text-primary transition-colors cursor-pointer text-left" data-testid="link-footer-security">{t("footer.security")}</button></li>
+                <li><button onClick={() => setShowTermsPopup(true)} className="hover:text-primary transition-colors cursor-pointer text-left text-nowrap" data-testid="link-footer-terms">{t("footer.terms")}</button></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-serif font-bold mb-4 text-foreground">Hours</h4>
+              <h4 className="font-serif font-bold mb-4 text-foreground">{t("footer.hours")}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>Mon - Fri: 8am - 9pm</li>
                 <li>Sat - Sun: 9am - 10pm</li>
@@ -341,7 +356,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
 
             <div>
-              <h4 className="font-serif font-bold mb-4 text-foreground">Support</h4>
+              <h4 className="font-serif font-bold mb-4 text-foreground">{t("footer.support")}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a href="tel:+919304335185" className="hover:text-primary transition-colors">
@@ -358,7 +373,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
 
             <div>
-              <h4 className="font-serif font-bold mb-4 text-foreground">Social</h4>
+              <h4 className="font-serif font-bold mb-4 text-foreground">{t("footer.social")}</h4>
               <div className="flex items-center justify-center md:justify-start gap-4 text-muted-foreground">
                 <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-transform hover:scale-110" data-testid="link-social-youtube">
                   <Youtube className="h-5 w-5" />
@@ -377,7 +392,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Chai Craft. All rights reserved.
+            © {new Date().getFullYear()} Chai Craft. {t("footer.rights")}
           </div>
         </div>
       </footer>

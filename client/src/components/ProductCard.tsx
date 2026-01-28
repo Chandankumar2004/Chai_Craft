@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 export function ProductCard({ product }: { product: Product }) {
   const addItem = useCart((state) => state.addItem);
+  const { t, language } = useLanguage();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -26,7 +28,7 @@ export function ProductCard({ product }: { product: Product }) {
         />
         {product.isBestSeller && (
           <Badge className="absolute top-3 right-3 bg-accent text-accent-foreground font-semibold hover:bg-accent/90">
-            Best Seller
+            {t("cart.bestseller")}
           </Badge>
         )}
       </div>
@@ -38,14 +40,11 @@ export function ProductCard({ product }: { product: Product }) {
           </Badge>
         </div>
         <h3 className="font-serif text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-          {product.name}
+          {language === 'hi' && product.hindiName ? product.hindiName : product.name}
         </h3>
         <p className="text-muted-foreground text-sm line-clamp-2 mb-2">
           {product.description}
         </p>
-        {product.hindiName && (
-           <p className="text-xs text-primary/60 font-medium italic">{product.hindiName}</p>
-        )}
       </CardContent>
 
       <CardFooter className="p-5 pt-0 flex items-center justify-between mt-auto">
@@ -57,7 +56,7 @@ export function ProductCard({ product }: { product: Product }) {
           className="rounded-full bg-secondary hover:bg-secondary/90 text-white shadow-md hover:shadow-lg transition-all"
           size="sm"
         >
-          <Plus className="w-4 h-4 mr-1" /> Add
+          <Plus className="w-4 h-4 mr-1" /> {t("cart.add")}
         </Button>
       </CardFooter>
     </Card>
