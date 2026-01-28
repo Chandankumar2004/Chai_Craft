@@ -1,7 +1,7 @@
-import { users, products, orders, orderItems, jobs, messages } from "@shared/schema";
+import { users, products, orders, orderItems, jobs, messages, promos, giftCards } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
-import type { InsertUser, InsertProduct, InsertOrder, InsertOrderItem, InsertJob, InsertMessage } from "@shared/schema";
+import { eq, desc, and } from "drizzle-orm";
+import type { InsertUser, InsertProduct, InsertOrder, InsertOrderItem, InsertJob, InsertMessage, Promo, GiftCard } from "@shared/schema";
 
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -37,6 +37,11 @@ export interface IStorage {
 
   // Messages
   createMessage(message: InsertMessage): Promise<typeof messages.$inferSelect>;
+
+  // Promos & Gift Cards
+  getPromoByCode(code: string): Promise<Promo | undefined>;
+  getGiftCardByCode(code: string): Promise<GiftCard | undefined>;
+  updateGiftCardBalance(id: number, balance: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -102,11 +107,9 @@ export class DatabaseStorage implements IStorage {
 
   async getOrders(userId?: number) {
     // Simple implementation - fetch orders then fetch items
-    let query = db.select().from(orders);
-    if (userId) {
-      query = query.where(eq(orders.userId, userId));
-    }
-    const userOrders = await query.orderBy(desc(orders.createdAt));
+    const userOrders = userId 
+      ? await db.select().from(orders).where(eq(orders.userId, userId)).orderBy(desc(orders.createdAt))
+      : await db.select().from(orders).orderBy(desc(orders.createdAt));
     
     // In a real app, use joins or dataloader. For MVP:
     const results = [];
@@ -152,6 +155,20 @@ export class DatabaseStorage implements IStorage {
   async createMessage(message: InsertMessage) {
     const [newMessage] = await db.insert(messages).values(message).returning();
     return newMessage;
+  }
+
+  async getPromoByCode(code: string) {
+    const [promo] = await db.select().from(promos).where(and(eq(promos.code, code), eq(promos.isActive, true)));
+    return promo;
+  }
+
+  async getGiftCardByCode(code: string) {
+    const [giftCard] = await db.select().from(giftCards).where(and(eq(giftCards.code, code), eq(giftCards.isActive, true)));
+    return giftCard;
+  }
+
+  async updateGiftCardBalance(id: number, balance: number) {
+    await db.update(giftCards).set({ balance }).where(eq(giftCards.id, id));
   }
 }
 

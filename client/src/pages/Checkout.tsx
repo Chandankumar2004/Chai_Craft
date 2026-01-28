@@ -9,11 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { QrCode, CheckCircle, AlertCircle } from "lucide-react";
+import { QrCode, CheckCircle, AlertCircle, Ticket, Gift } from "lucide-react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const checkoutSchema = z.object({
   deliveryAddress: z.string().min(5, "Delivery address is required"),
@@ -25,8 +27,56 @@ export default function Checkout() {
   const { data: user } = useUser();
   const { mutateAsync: createOrder } = useCreateOrder();
   const [_, setLocation] = useLocation();
-  const cartTotal = total();
+  const { toast } = useToast();
   
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<any>(null);
+  const [giftCardCode, setGiftCardCode] = useState("");
+  const [appliedGiftCard, setAppliedGiftCard] = useState<any>(null);
+  
+  const cartTotal = total();
+  let discount = 0;
+  
+  if (appliedPromo) {
+    if (appliedPromo.type === 'percentage') {
+      discount += Math.floor((cartTotal * appliedPromo.value) / 100);
+    } else {
+      discount += appliedPromo.value;
+    }
+  }
+  
+  if (appliedGiftCard) {
+    discount += Math.min(appliedGiftCard.balance, cartTotal - discount);
+  }
+  
+  const finalTotal = Math.max(0, cartTotal - discount);
+  
+  const handleApplyPromo = async () => {
+    try {
+      const res = await apiRequest("GET", `/api/promos/${promoCode}`);
+      const promo = await res.json();
+      if (cartTotal < (promo.minOrderAmount || 0)) {
+        toast({ title: "Min order amount not met", variant: "destructive" });
+        return;
+      }
+      setAppliedPromo(promo);
+      toast({ title: "Promo code applied!" });
+    } catch (e) {
+      toast({ title: "Invalid promo code", variant: "destructive" });
+    }
+  };
+
+  const handleApplyGiftCard = async () => {
+    try {
+      const res = await apiRequest("GET", `/api/gift-cards/${giftCardCode}`);
+      const gc = await res.json();
+      setAppliedGiftCard(gc);
+      toast({ title: "Gift card applied!" });
+    } catch (e) {
+      toast({ title: "Invalid gift card", variant: "destructive" });
+    }
+  };
+
   const form = useForm<{deliveryAddress: string; paymentConfirmed: boolean}>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
@@ -56,8 +106,10 @@ export default function Checkout() {
       await createOrder({
         items: items.map(item => ({ productId: item.id, quantity: item.quantity })),
         deliveryAddress: data.deliveryAddress,
-        totalAmount: cartTotal,
-      });
+        totalAmount: finalTotal,
+        promoCode: appliedPromo?.code,
+        giftCardCode: appliedGiftCard?.code,
+      } as any);
       clearCart();
       setLocation("/profile"); // Redirect to orders
     } catch (error) {
@@ -98,6 +150,42 @@ export default function Checkout() {
               </CardContent>
             </Card>
 
+            {/* Promo & Gift Card Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  Offers & Gift Cards
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2"><Ticket className="w-4 h-4" /> Promo Code</Label>
+                  <div className="flex gap-2">
+                    <Input 
+                      placeholder="CHAI10" 
+                      value={promoCode} 
+                      onChange={(e) => setPromoCode(e.target.value)} 
+                    />
+                    <Button type="button" variant="outline" onClick={handleApplyPromo}>Apply</Button>
+                  </div>
+                  {appliedPromo && <p className="text-xs text-green-600 font-medium">Applied: {appliedPromo.code}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2"><Gift className="w-4 h-4" /> Gift Card</Label>
+                  <div className="flex gap-2">
+                    <Input 
+                      placeholder="GIFT-XXXX" 
+                      value={giftCardCode} 
+                      onChange={(e) => setGiftCardCode(e.target.value)} 
+                    />
+                    <Button type="button" variant="outline" onClick={handleApplyGiftCard}>Apply</Button>
+                  </div>
+                  {appliedGiftCard && <p className="text-xs text-green-600 font-medium">Balance: ₹{appliedGiftCard.balance}</p>}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Payment Section */}
             <Card className="border-primary/20 bg-primary/5">
               <CardHeader>
@@ -111,7 +199,6 @@ export default function Checkout() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex flex-col items-center justify-center p-6 bg-white rounded-xl border border-border">
-                  {/* Placeholder QR Code - Using a generic icon representation or a placeholder image URL if available */}
                   <div className="w-48 h-48 bg-gray-100 flex items-center justify-center rounded-lg mb-4 border-2 border-dashed border-gray-300">
                     <QrCode className="w-16 h-16 text-gray-400" />
                     <span className="sr-only">QR Code Placeholder</span>
@@ -119,7 +206,7 @@ export default function Checkout() {
                   <div className="text-center space-y-1">
                     <p className="font-bold text-lg text-primary">chandan32005c-2@oksbi</p>
                     <p className="text-sm text-muted-foreground">Mobile: 9304335185</p>
-                    <p className="font-bold text-xl mt-2">Amount: ₹{cartTotal}</p>
+                    <p className="font-bold text-xl mt-2">Amount: ₹{finalTotal}</p>
                   </div>
                 </div>
 
@@ -164,10 +251,19 @@ export default function Checkout() {
                      <span className="font-medium">₹{item.price * item.quantity}</span>
                    </div>
                  ))}
+                 {discount > 0 && (
+                   <>
+                     <Separator />
+                     <div className="flex justify-between text-sm text-green-600">
+                       <span>Total Discount</span>
+                       <span>-₹{discount}</span>
+                     </div>
+                   </>
+                 )}
                  <Separator />
                  <div className="flex justify-between text-lg font-bold text-primary">
                    <span>Total Payable</span>
-                   <span>₹{cartTotal}</span>
+                   <span>₹{finalTotal}</span>
                  </div>
                </CardContent>
              </Card>

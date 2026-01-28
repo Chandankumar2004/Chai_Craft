@@ -20,7 +20,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.post("/api/products", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
     const parsed = insertProductSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(parsed.error);
     const product = await storage.createProduct(parsed.data);
@@ -28,14 +28,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.put("/api/products/:id", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
     const id = parseInt(req.params.id);
     const product = await storage.updateProduct(id, req.body);
     res.json(product);
   });
 
   app.delete("/api/products/:id", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
     const id = parseInt(req.params.id);
     await storage.deleteProduct(id);
     res.sendStatus(200);
@@ -61,13 +61,13 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
 
     const order = await storage.createOrder({
-      userId: req.user.id,
+      userId: (req.user as any).id,
       totalAmount,
       deliveryAddress,
       paymentMethod: "UPI",
       status: "pending",
       paymentStatus: "pending_verification"
-    }, orderItemsData);
+    }, orderItemsData as any);
 
     res.status(201).json(order);
   });
@@ -75,11 +75,11 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.get("/api/orders", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
-    if (req.user.role === "admin") {
+    if ((req.user as any).role === "admin") {
       const orders = await storage.getAllOrders();
       return res.json(orders);
     } else {
-      const orders = await storage.getOrders(req.user.id);
+      const orders = await storage.getOrders((req.user as any).id);
       return res.json(orders);
     }
   });
@@ -91,13 +91,13 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.post("/api/jobs", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
     const job = await storage.createJob(req.body);
     res.status(201).json(job);
   });
 
   app.delete("/api/jobs/:id", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
     const id = parseInt(req.params.id);
     await storage.deleteJob(id);
     res.sendStatus(200);
@@ -107,6 +107,20 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.post("/api/messages", async (req, res) => {
     const message = await storage.createMessage(req.body);
     res.status(201).json(message);
+  });
+
+  // Promos
+  app.get("/api/promos/:code", async (req, res) => {
+    const promo = await storage.getPromoByCode(req.params.code);
+    if (!promo) return res.status(404).send("Promo code not found");
+    res.json(promo);
+  });
+
+  // Gift Cards
+  app.get("/api/gift-cards/:code", async (req, res) => {
+    const giftCard = await storage.getGiftCardByCode(req.params.code);
+    if (!giftCard) return res.status(404).send("Gift card not found");
+    res.json(giftCard);
   });
 
   return httpServer;

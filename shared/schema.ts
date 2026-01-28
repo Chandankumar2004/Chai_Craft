@@ -55,11 +55,40 @@ export type InsertJob = z.infer<typeof insertJobSchema>;
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 
+export const promos = pgTable("promos", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  type: text("type").notNull(), // 'percentage' | 'fixed'
+  value: integer("total_amount").notNull(), // percentage or fixed amount
+  minOrderAmount: integer("min_order_amount").default(0),
+  isActive: boolean("is_active").default(true),
+  expiresAt: timestamp("expires_at"),
+});
+
+export const giftCards = pgTable("gift_cards", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  balance: integer("balance").notNull(),
+  isActive: boolean("is_active").default(true),
+  expiresAt: timestamp("expires_at"),
+});
+
+export const insertPromoSchema = createInsertSchema(promos).omit({ id: true });
+export const insertGiftCardSchema = createInsertSchema(giftCards).omit({ id: true });
+
+export type Promo = typeof promos.$inferSelect;
+export type GiftCard = typeof giftCards.$inferSelect;
+export type InsertPromo = z.infer<typeof insertPromoSchema>;
+export type InsertGiftCard = z.infer<typeof insertGiftCardSchema>;
+
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
   status: text("status").notNull().default("pending"), // 'pending', 'confirmed', 'delivered', 'cancelled'
   totalAmount: integer("total_amount").notNull(),
+  discountAmount: integer("discount_amount").default(0),
+  promoCode: text("promo_code"),
+  giftCardCode: text("gift_card_code"),
   paymentMethod: text("payment_method").notNull().default("UPI"),
   paymentStatus: text("payment_status").notNull().default("pending_verification"), // 'pending_verification', 'paid', 'failed'
   paymentDetails: jsonb("payment_details"), // Store UPI transaction info if needed
@@ -89,6 +118,10 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertProductSchema = createInsertSchema(products).omit({ id: true });
 export const insertOrderSchema = createInsertSchema(orders).omit({ id: true, createdAt: true });
 export const insertOrderItemSchema = createInsertSchema(orderItems).omit({ id: true });
+
+export type CreateOrderInput = z.infer<typeof insertOrderSchema> & {
+  items: { productId: number, quantity: number }[];
+};
 
 // Types
 export type User = typeof users.$inferSelect;
