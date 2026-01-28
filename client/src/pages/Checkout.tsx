@@ -39,7 +39,9 @@ export default function Checkout() {
     { code: "CHAI100", label: "₹100 = 5% off", min: 100, type: "percentage", value: 5 },
     { code: "CHAI200", label: "₹200 = 6% off", min: 200, type: "percentage", value: 6 },
     { code: "CHAI300", label: "₹300 = ₹35 off", min: 300, type: "fixed", value: 35 },
+    { code: "CHAI400", label: "₹400 = ₹40 off", min: 400, type: "fixed", value: 40 },
     { code: "CHAI500", label: "₹500 = ₹50 off", min: 500, type: "fixed", value: 50 },
+    { code: "CHAI1000", label: "₹1000 = ₹110 off", min: 1000, type: "fixed", value: 110 },
   ];
 
   const cartTotal = total();
@@ -209,7 +211,20 @@ export default function Checkout() {
                     />
                     <Button type="button" variant="outline" onClick={() => handleApplyPromo()}>Apply</Button>
                   </div>
-                  {appliedPromo && <p className="text-xs text-green-600 font-medium">Applied: {appliedPromo.code}</p>}
+                  {appliedPromo && (
+                    <div className="flex items-center justify-between p-2 mt-2 rounded border border-green-200 bg-green-50">
+                      <p className="text-xs text-green-700 font-medium">Applied: {appliedPromo.code}</p>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => setAppliedPromo(null)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -222,7 +237,20 @@ export default function Checkout() {
                     />
                     <Button type="button" variant="outline" onClick={handleApplyGiftCard}>Apply</Button>
                   </div>
-                  {appliedGiftCard && <p className="text-xs text-green-600 font-medium">Balance: ₹{appliedGiftCard.balance}</p>}
+                  {appliedGiftCard && (
+                    <div className="flex items-center justify-between p-2 mt-2 rounded border border-green-200 bg-green-50">
+                      <p className="text-xs text-green-700 font-medium">Balance: ₹{appliedGiftCard.balance}</p>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => setAppliedGiftCard(null)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
