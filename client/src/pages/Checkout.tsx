@@ -33,7 +33,15 @@ export default function Checkout() {
   const [appliedPromo, setAppliedPromo] = useState<any>(null);
   const [giftCardCode, setGiftCardCode] = useState("");
   const [appliedGiftCard, setAppliedGiftCard] = useState<any>(null);
-  
+  const [showAllPromos, setShowAllPromos] = useState(false);
+
+  const tieredPromos = [
+    { code: "CHAI100", label: "₹100 = 5% off", min: 100, type: "percentage", value: 5 },
+    { code: "CHAI200", label: "₹200 = 6% off", min: 200, type: "percentage", value: 6 },
+    { code: "CHAI300", label: "₹300 = ₹35 off", min: 300, type: "fixed", value: 35 },
+    { code: "CHAI500", label: "₹500 = ₹50 off", min: 500, type: "fixed", value: 50 },
+  ];
+
   const cartTotal = total();
   let discount = 0;
   
@@ -51,12 +59,19 @@ export default function Checkout() {
   
   const finalTotal = Math.max(0, cartTotal - discount);
   
-  const handleApplyPromo = async () => {
+  const handleApplyPromo = async (promoData?: any) => {
+    const codeToApply = promoData?.code || promoCode;
     try {
-      const res = await apiRequest("GET", `/api/promos/${promoCode}`);
-      const promo = await res.json();
-      if (cartTotal < (promo.minOrderAmount || 0)) {
-        toast({ title: "Min order amount not met", variant: "destructive" });
+      let promo;
+      if (promoData) {
+        promo = promoData;
+      } else {
+        const res = await apiRequest("GET", `/api/promos/${codeToApply}`);
+        promo = await res.json();
+      }
+
+      if (cartTotal < (promo.min || promo.minOrderAmount || 0)) {
+        toast({ title: `Minimum order of ₹${promo.min || promo.minOrderAmount} required`, variant: "destructive" });
         return;
       }
       setAppliedPromo(promo);
@@ -158,15 +173,41 @@ export default function Checkout() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2"><Ticket className="w-4 h-4" /> Promo Code</Label>
-                  <div className="flex gap-2">
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2"><Ticket className="w-4 h-4" /> Available Offers</Label>
+                  <div className="grid grid-cols-1 gap-2">
+                    {(showAllPromos ? tieredPromos : tieredPromos.slice(0, 2)).map((promo) => (
+                      <div 
+                        key={promo.code}
+                        className="flex items-center justify-between p-3 rounded-lg border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer"
+                        onClick={() => handleApplyPromo(promo)}
+                      >
+                        <div>
+                          <p className="font-bold text-sm text-primary">{promo.code}</p>
+                          <p className="text-xs text-muted-foreground">{promo.label}</p>
+                        </div>
+                        <Button type="button" variant="ghost" size="sm" className="text-primary font-bold">Apply</Button>
+                      </div>
+                    ))}
+                    {!showAllPromos && tieredPromos.length > 2 && (
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-xs text-muted-foreground w-fit h-auto p-0 hover:bg-transparent"
+                        onClick={() => setShowAllPromos(true)}
+                      >
+                        View More
+                      </Button>
+                    )}
+                  </div>
+                  <div className="flex gap-2 pt-2">
                     <Input 
-                      placeholder="CHAI10" 
+                      placeholder="Enter promo code" 
                       value={promoCode} 
                       onChange={(e) => setPromoCode(e.target.value)} 
                     />
-                    <Button type="button" variant="outline" onClick={handleApplyPromo}>Apply</Button>
+                    <Button type="button" variant="outline" onClick={() => handleApplyPromo()}>Apply</Button>
                   </div>
                   {appliedPromo && <p className="text-xs text-green-600 font-medium">Applied: {appliedPromo.code}</p>}
                 </div>
