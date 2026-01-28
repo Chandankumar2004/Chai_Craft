@@ -126,6 +126,7 @@ export default function Checkout() {
         totalAmount: finalTotal,
         promoCode: appliedPromo?.code,
         giftCardCode: appliedGiftCard?.code,
+        discountAmount: discount,
       } as any);
       clearCart();
       setLocation("/profile"); // Redirect to orders
