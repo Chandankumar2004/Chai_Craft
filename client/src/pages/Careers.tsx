@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Briefcase, MapPin, Clock, Trash2, Plus, Info, CheckCircle2 } from "lucide-react";
 import { useUser } from "@/hooks/use-auth";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -70,6 +70,7 @@ export default function Careers() {
       await apiRequest("POST", "/api/job-applications", data);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/my-applications"] });
       toast({ title: "Application Submitted", description: "We'll be in touch soon!" });
       setApplyingJob(null);
       applyForm.reset();

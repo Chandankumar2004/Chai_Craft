@@ -187,7 +187,7 @@ function JobsManager() {
                   <TableCell>
                     <div>
                       <p className="font-bold">{app.name}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(app.createdAt!).toLocaleDateString()}</p>
+                      <p className="text-xs text-muted-foreground">{app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}</p>
                     </div>
                   </TableCell>
                   <TableCell>{jobs?.find(j => j.id === app.jobId)?.role || "N/A"}</TableCell>
@@ -527,7 +527,7 @@ function OrdersManager() {
                 <TableRow key={order.id}>
                   <TableCell>#{order.id}</TableCell>
                   <TableCell>₹{order.totalAmount}</TableCell>
-                  <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell>{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}</TableCell>
                   <TableCell>
                     <Badge variant={order.paymentStatus === 'paid' ? 'default' : 'secondary'} className={order.paymentStatus === 'paid' ? 'bg-green-600' : ''}>
                       {order.paymentStatus}
