@@ -27,16 +27,6 @@ export const products = pgTable("products", {
   isBestSeller: boolean("is_best_seller").default(false),
 });
 
-export const jobs = pgTable("jobs", {
-  id: serial("id").primaryKey(),
-  role: text("role").notNull(),
-  description: text("description").notNull(),
-  location: text("location").notNull(),
-  type: text("type").notNull(), // 'Full-time' | 'Part-time'
-  salary: text("salary"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
 export const messages = pgTable("messages", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -45,13 +35,41 @@ export const messages = pgTable("messages", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const jobs = pgTable("jobs", {
+  id: serial("id").primaryKey(),
+  role: text("role").notNull(),
+  description: text("description").notNull(),
+  requirements: text("requirements"),
+  benefits: text("benefits"),
+  location: text("location").notNull(),
+  type: text("type").notNull(), // 'Full-time' | 'Part-time'
+  salary: text("salary"),
+  status: text("status").notNull().default("open"), // 'open' | 'closed'
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const jobApplications = pgTable("job_applications", {
+  id: serial("id").primaryKey(),
+  jobId: integer("job_id").notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  resumeUrl: text("resume_url"),
+  message: text("message"),
+  status: text("status").notNull().default("pending"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Schemas
 export const insertJobSchema = createInsertSchema(jobs).omit({ id: true, createdAt: true });
+export const insertJobApplicationSchema = createInsertSchema(jobApplications).omit({ id: true, createdAt: true });
 export const insertMessageSchema = createInsertSchema(messages).omit({ id: true, createdAt: true });
 
 // Types
 export type Job = typeof jobs.$inferSelect;
 export type InsertJob = z.infer<typeof insertJobSchema>;
+export type JobApplication = typeof jobApplications.$inferSelect;
+export type InsertJobApplication = z.infer<typeof insertJobApplicationSchema>;
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 

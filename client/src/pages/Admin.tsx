@@ -10,13 +10,142 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useLocation } from "wouter";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { insertProductSchema, type InsertProduct } from "@shared/schema";
-import { useState } from "react";
-import { Edit, Trash2, Plus, CheckCircle, XCircle } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+function JobsManager() {
+  const { data: jobs } = useQuery<any[]>({ queryKey: ["/api/jobs"] });
+  const { data: applications } = useQuery<any[]>({ queryKey: ["/api/job-applications"] });
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const updateJobStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: number, status: string }) => {
+      await apiRequest("PATCH", `/api/jobs/${id}`, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/jobs"] });
+      toast({ title: "Job Status Updated" });
+    }
+  });
+
+  const updateAppStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: number, status: string }) => {
+      await apiRequest("PATCH", `/api/job-applications/${id}`, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/job-applications"] });
+      toast({ title: "Application Status Updated" });
+    }
+  });
+
+  return (
+    <div className="space-y-10">
+      <Card>
+        <CardHeader>
+          <CardTitle>Manage Job Openings</CardTitle>
+          <CardDescription>Control visibility of current job roles.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Role</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {jobs?.map((job) => (
+                <TableRow key={job.id}>
+                  <TableCell className="font-bold">{job.role}</TableCell>
+                  <TableCell>{job.location}</TableCell>
+                  <TableCell>
+                    <Badge variant={job.status === 'open' ? 'default' : 'secondary'}>
+                      {job.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => updateJobStatus.mutate({ 
+                        id: job.id, 
+                        status: job.status === 'open' ? 'closed' : 'open' 
+                      })}
+                    >
+                      {job.status === 'open' ? 'Close Opening' : 'Re-open'}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Applications Received</CardTitle>
+          <CardDescription>Review candidates who applied for roles.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Applicant</TableHead>
+                <TableHead>Job Role</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Resume</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {applications?.map((app) => (
+                <TableRow key={app.id}>
+                  <TableCell>
+                    <div>
+                      <p className="font-bold">{app.name}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(app.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>{jobs?.find(j => j.id === app.jobId)?.role || "N/A"}</TableCell>
+                  <TableCell>
+                    <div className="text-xs">
+                      <p>{app.email}</p>
+                      <p>{app.phone}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <a href={app.resumeUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline text-xs">View Resume</a>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{app.status}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <select 
+                      className="text-xs border rounded p-1"
+                      value={app.status}
+                      onChange={(e) => updateAppStatus.mutate({ id: app.id, status: e.target.value })}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="reviewed">Reviewed</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="hired">Hired</option>
+                    </select>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Admin() {
   const { data: user } = useUser();
@@ -40,6 +169,7 @@ export default function Admin() {
             <TabsTrigger value="stats">Overview</TabsTrigger>
             <TabsTrigger value="products">Menu Management</TabsTrigger>
             <TabsTrigger value="orders">Orders & Payments</TabsTrigger>
+            <TabsTrigger value="jobs">Job Applications</TabsTrigger>
           </TabsList>
 
           <TabsContent value="stats">
@@ -52,6 +182,10 @@ export default function Admin() {
 
           <TabsContent value="orders">
             <OrdersManager />
+          </TabsContent>
+
+          <TabsContent value="jobs">
+            <JobsManager />
           </TabsContent>
         </Tabs>
       </div>

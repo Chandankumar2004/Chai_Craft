@@ -99,11 +99,37 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.status(201).json(job);
   });
 
+  app.patch("/api/jobs/:id", async (req, res) => {
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    const id = parseInt(req.params.id);
+    const job = await storage.updateJob(id, req.body);
+    res.json(job);
+  });
+
   app.delete("/api/jobs/:id", async (req, res) => {
     if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
     const id = parseInt(req.params.id);
     await storage.deleteJob(id);
     res.sendStatus(200);
+  });
+
+  // Job Applications
+  app.get("/api/job-applications", async (req, res) => {
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    const apps = await storage.getJobApplications();
+    res.json(apps);
+  });
+
+  app.post("/api/job-applications", async (req, res) => {
+    const appData = await storage.createJobApplication(req.body);
+    res.status(201).json(appData);
+  });
+
+  app.patch("/api/job-applications/:id", async (req, res) => {
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    const id = parseInt(req.params.id);
+    const appData = await storage.updateJobApplicationStatus(id, req.body.status);
+    res.json(appData);
   });
 
   // Messages

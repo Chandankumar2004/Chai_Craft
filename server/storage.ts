@@ -1,7 +1,7 @@
-import { users, products, orders, orderItems, jobs, messages, promos, giftCards, reviews } from "@shared/schema";
+import { users, products, orders, orderItems, jobs, messages, promos, giftCards, reviews, jobApplications } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
-import type { InsertUser, InsertProduct, InsertOrder, InsertOrderItem, InsertJob, InsertMessage, Promo, GiftCard, Review, InsertReview } from "@shared/schema";
+import type { InsertUser, InsertProduct, InsertOrder, InsertOrderItem, InsertJob, InsertMessage, Promo, GiftCard, Review, InsertReview, InsertJobApplication } from "@shared/schema";
 
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -33,7 +33,13 @@ export interface IStorage {
   // Jobs
   getJobs(): Promise<(typeof jobs.$inferSelect)[]>;
   createJob(job: InsertJob): Promise<typeof jobs.$inferSelect>;
+  updateJob(id: number, job: Partial<InsertJob>): Promise<typeof jobs.$inferSelect>;
   deleteJob(id: number): Promise<void>;
+  
+  // Job Applications
+  getJobApplications(jobId?: number): Promise<(typeof jobApplications.$inferSelect)[]>;
+  createJobApplication(application: InsertJobApplication): Promise<typeof jobApplications.$inferSelect>;
+  updateJobApplicationStatus(id: number, status: string): Promise<typeof jobApplications.$inferSelect>;
 
   // Messages
   createMessage(message: InsertMessage): Promise<typeof messages.$inferSelect>;
@@ -152,8 +158,30 @@ export class DatabaseStorage implements IStorage {
     return newJob;
   }
 
+  async updateJob(id: number, job: Partial<InsertJob>) {
+    const [updated] = await db.update(jobs).set(job).where(eq(jobs.id, id)).returning();
+    return updated;
+  }
+
   async deleteJob(id: number) {
     await db.delete(jobs).where(eq(jobs.id, id));
+  }
+
+  async getJobApplications(jobId?: number) {
+    if (jobId) {
+      return await db.select().from(jobApplications).where(eq(jobApplications.jobId, jobId)).orderBy(desc(jobApplications.createdAt));
+    }
+    return await db.select().from(jobApplications).orderBy(desc(jobApplications.createdAt));
+  }
+
+  async createJobApplication(application: InsertJobApplication) {
+    const [newApp] = await db.insert(jobApplications).values(application).returning();
+    return newApp;
+  }
+
+  async updateJobApplicationStatus(id: number, status: string) {
+    const [updated] = await db.update(jobApplications).set({ status }).where(eq(jobApplications.id, id)).returning();
+    return updated;
   }
 
   async createMessage(message: InsertMessage) {
