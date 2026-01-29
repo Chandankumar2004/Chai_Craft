@@ -42,6 +42,19 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // Orders
+  app.patch("/api/orders/:id/status", async (req, res) => {
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    const id = parseInt(req.params.id);
+    const { status, paymentStatus } = req.body;
+    try {
+      const order = await storage.updateOrderStatus(id, status, paymentStatus);
+      res.json(order);
+    } catch (error: any) {
+      console.error("Error updating order status:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/orders", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     

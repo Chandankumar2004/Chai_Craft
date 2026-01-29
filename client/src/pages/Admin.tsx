@@ -467,8 +467,12 @@ function OrdersManager() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      {order.paymentStatus === 'pending_verification' && (
-                        <Button size="sm" onClick={() => handleVerifyPayment(order.id)} className="bg-green-600 hover:bg-green-700">
+                      {(order.paymentStatus === 'pending_verification' || order.paymentStatus === 'pending') && (
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleVerifyPayment(order.id)} 
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
                           Verify Payment
                         </Button>
                       )}
