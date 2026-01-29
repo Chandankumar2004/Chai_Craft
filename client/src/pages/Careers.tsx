@@ -86,6 +86,21 @@ export default function Careers() {
     }
   });
 
+  const { data: myApplications } = useQuery<any[]>({
+    queryKey: ["/api/my-applications"],
+    enabled: !!user,
+  });
+
+  const withdrawMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/job-applications/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/my-applications"] });
+      toast({ title: "Application Withdrawn" });
+    }
+  });
+
   return (
     <Layout>
       <div className="bg-primary/5 py-20">
@@ -96,52 +111,45 @@ export default function Careers() {
             We're building more than just a tea shop. We're creating experiences. 
             Join the Chai Craft family and brew something amazing.
           </p>
-          {user?.role === "admin" && (
-            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-              <DialogTrigger asChild>
-                <Button className="mt-10 gap-2 h-12 px-8 rounded-full shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
-                  <Plus className="h-5 w-5" /> Post New Role
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader><DialogTitle className="text-2xl font-serif">Post New Job Opening</DialogTitle></DialogHeader>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit((data) => createMutation.mutate(data))} className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField control={form.control} name="role" render={({ field }) => (
-                        <FormItem><FormLabel>Role Title</FormLabel><FormControl><Input placeholder="e.g. Master Brewer" {...field} /></FormControl><FormMessage /></FormItem>
-                      )} />
-                      <FormField control={form.control} name="location" render={({ field }) => (
-                        <FormItem><FormLabel>Location</FormLabel><FormControl><Input placeholder="e.g. Mumbai, India" {...field} /></FormControl><FormMessage /></FormItem>
-                      )} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField control={form.control} name="type" render={({ field }) => (
-                        <FormItem><FormLabel>Employment Type</FormLabel><FormControl><Input placeholder="e.g. Full-time" {...field} /></FormControl><FormMessage /></FormItem>
-                      )} />
-                      <FormField control={form.control} name="salary" render={({ field }) => (
-                        <FormItem><FormLabel>Salary Range</FormLabel><FormControl><Input placeholder="e.g. ₹30k - ₹45k" {...field} /></FormControl><FormMessage /></FormItem>
-                      )} />
-                    </div>
-                    <FormField control={form.control} name="description" render={({ field }) => (
-                      <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea rows={4} placeholder="What does this role involve?" {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    <FormField control={form.control} name="requirements" render={({ field }) => (
-                      <FormItem><FormLabel>Requirements</FormLabel><FormControl><Textarea placeholder="What are we looking for?" {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    <Button type="submit" className="w-full h-12 text-lg" disabled={createMutation.isPending}>
-                      {createMutation.isPending ? "Posting..." : "Post Job Opportunity"}
-                    </Button>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          )}
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 py-10">
+        {user && myApplications && myApplications.length > 0 && (
+          <div className="max-w-5xl mx-auto mb-16">
+            <h2 className="font-serif text-2xl font-bold mb-6">Your Applications</h2>
+            <div className="grid gap-4">
+              {myApplications.map((app) => (
+                <Card key={app.id} className="rounded-2xl border-none shadow-sm bg-muted/30">
+                  <CardContent className="p-6 flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-lg">{jobs?.find(j => j.id === app.jobId)?.role || "Unknown Role"}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="capitalize">{app.status}</Badge>
+                        <p className="text-xs text-muted-foreground">Applied on {new Date(app.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    {app.status === 'pending' && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-destructive hover:bg-destructive/10"
+                        onClick={() => withdrawMutation.mutate(app.id)}
+                      >
+                        Withdraw
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="grid gap-8 max-w-5xl mx-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-serif text-3xl font-bold">Open Positions</h2>
+          </div>
           {isLoading ? (
             [1, 2, 3].map(i => <div key={i} className="h-48 bg-muted animate-pulse rounded-2xl" />)
           ) : jobs?.filter(j => j.status === 'open').length === 0 ? (

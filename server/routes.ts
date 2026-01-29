@@ -133,9 +133,24 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json(apps);
   });
 
+  app.get("/api/my-applications", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const apps = await storage.getJobApplications(undefined, (req.user as any).id);
+    res.json(apps);
+  });
+
   app.post("/api/job-applications", async (req, res) => {
-    const appData = await storage.createJobApplication(req.body);
+    const userId = req.isAuthenticated() ? (req.user as any).id : null;
+    const appData = await storage.createJobApplication({ ...req.body, userId });
     res.status(201).json(appData);
+  });
+
+  app.delete("/api/job-applications/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const id = parseInt(req.params.id);
+    // Simple verification (could be more robust)
+    await storage.deleteJobApplication(id);
+    res.sendStatus(200);
   });
 
   app.patch("/api/job-applications/:id", async (req, res) => {

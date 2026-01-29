@@ -21,11 +21,41 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { insertJobSchema } from "@shared/schema";
 function JobsManager() {
   const { data: jobs } = useQuery<any[]>({ queryKey: ["/api/jobs"] });
   const { data: applications } = useQuery<any[]>({ queryKey: ["/api/job-applications"] });
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [isAddOpen, setIsAddOpen] = useState(false);
+
+  const form = useForm({
+    resolver: zodResolver(insertJobSchema),
+    defaultValues: { 
+      role: "", 
+      description: "", 
+      location: "", 
+      type: "Full-time", 
+      salary: "",
+      requirements: "",
+      benefits: "",
+      status: "open"
+    }
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: any) => {
+      await apiRequest("POST", "/api/jobs", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/jobs"] });
+      toast({ title: "Job Posted" });
+      setIsAddOpen(false);
+      form.reset();
+    }
+  });
 
   const updateJobStatus = useMutation({
     mutationFn: async ({ id, status }: { id: number, status: string }) => {
@@ -49,6 +79,47 @@ function JobsManager() {
 
   return (
     <div className="space-y-10">
+      <div className="flex justify-end">
+        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" /> Add New Job
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle className="text-2xl font-serif">Post New Job Opening</DialogTitle></DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit((data) => createMutation.mutate(data))} className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField control={form.control} name="role" render={({ field }) => (
+                    <FormItem><FormLabel>Role Title</FormLabel><FormControl><Input placeholder="e.g. Master Brewer" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="location" render={({ field }) => (
+                    <FormItem><FormLabel>Location</FormLabel><FormControl><Input placeholder="e.g. Mumbai, India" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField control={form.control} name="type" render={({ field }) => (
+                    <FormItem><FormLabel>Employment Type</FormLabel><FormControl><Input placeholder="e.g. Full-time" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="salary" render={({ field }) => (
+                    <FormItem><FormLabel>Salary Range</FormLabel><FormControl><Input placeholder="e.g. ₹30k - ₹45k" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                </div>
+                <FormField control={form.control} name="description" render={({ field }) => (
+                  <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea rows={4} placeholder="What does this role involve?" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="requirements" render={({ field }) => (
+                  <FormItem><FormLabel>Requirements</FormLabel><FormControl><Textarea placeholder="What are we looking for?" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <Button type="submit" className="w-full h-12 text-lg" disabled={createMutation.isPending}>
+                  {createMutation.isPending ? "Posting..." : "Post Job Opportunity"}
+                </Button>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+      </div>
       <Card>
         <CardHeader>
           <CardTitle>Manage Job Openings</CardTitle>

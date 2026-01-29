@@ -37,9 +37,10 @@ export interface IStorage {
   deleteJob(id: number): Promise<void>;
   
   // Job Applications
-  getJobApplications(jobId?: number): Promise<(typeof jobApplications.$inferSelect)[]>;
+  getJobApplications(jobId?: number, userId?: number): Promise<(typeof jobApplications.$inferSelect)[]>;
   createJobApplication(application: InsertJobApplication): Promise<typeof jobApplications.$inferSelect>;
   updateJobApplicationStatus(id: number, status: string): Promise<typeof jobApplications.$inferSelect>;
+  deleteJobApplication(id: number): Promise<void>;
 
   // Messages
   createMessage(message: InsertMessage): Promise<typeof messages.$inferSelect>;
@@ -167,11 +168,18 @@ export class DatabaseStorage implements IStorage {
     await db.delete(jobs).where(eq(jobs.id, id));
   }
 
-  async getJobApplications(jobId?: number) {
+  async getJobApplications(jobId?: number, userId?: number) {
     if (jobId) {
       return await db.select().from(jobApplications).where(eq(jobApplications.jobId, jobId)).orderBy(desc(jobApplications.createdAt));
     }
+    if (userId) {
+      return await db.select().from(jobApplications).where(eq(jobApplications.userId, userId)).orderBy(desc(jobApplications.createdAt));
+    }
     return await db.select().from(jobApplications).orderBy(desc(jobApplications.createdAt));
+  }
+
+  async deleteJobApplication(id: number) {
+    await db.delete(jobApplications).where(eq(jobApplications.id, id));
   }
 
   async createJobApplication(application: InsertJobApplication) {
