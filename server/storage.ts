@@ -1,7 +1,7 @@
-import { users, products, orders, orderItems, jobs, messages, promos, giftCards } from "@shared/schema";
+import { users, products, orders, orderItems, jobs, messages, promos, giftCards, reviews } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
-import type { InsertUser, InsertProduct, InsertOrder, InsertOrderItem, InsertJob, InsertMessage, Promo, GiftCard } from "@shared/schema";
+import type { InsertUser, InsertProduct, InsertOrder, InsertOrderItem, InsertJob, InsertMessage, Promo, GiftCard, Review, InsertReview } from "@shared/schema";
 
 import session from "express-session";
 import createMemoryStore from "memorystore";
