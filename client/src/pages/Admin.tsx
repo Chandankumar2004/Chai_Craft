@@ -10,6 +10,17 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useLocation } from "wouter";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { insertProductSchema, type InsertProduct } from "@shared/schema";
+import { useState } from "react";
+import { Edit, Trash2, Plus, CheckCircle, XCircle } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+
 function JobsManager() {
   const { data: jobs } = useQuery<any[]>({ queryKey: ["/api/jobs"] });
   const { data: applications } = useQuery<any[]>({ queryKey: ["/api/job-applications"] });
@@ -105,7 +116,7 @@ function JobsManager() {
                   <TableCell>
                     <div>
                       <p className="font-bold">{app.name}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(app.createdAt).toLocaleDateString()}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(app.createdAt!).toLocaleDateString()}</p>
                     </div>
                   </TableCell>
                   <TableCell>{jobs?.find(j => j.id === app.jobId)?.role || "N/A"}</TableCell>
@@ -142,10 +153,6 @@ function JobsManager() {
     </div>
   );
 }
-
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
 
 export default function Admin() {
   const { data: user } = useUser();
