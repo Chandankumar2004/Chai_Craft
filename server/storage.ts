@@ -38,6 +38,10 @@ export interface IStorage {
   // Messages
   createMessage(message: InsertMessage): Promise<typeof messages.$inferSelect>;
 
+  // Reviews
+  getReviewsByProduct(productId: number): Promise<(typeof reviews.$inferSelect & { user: typeof users.$inferSelect })[]>;
+  createReview(review: InsertReview): Promise<typeof reviews.$inferSelect>;
+
   // Promos & Gift Cards
   getPromoByCode(code: string): Promise<Promo | undefined>;
   getGiftCardByCode(code: string): Promise<GiftCard | undefined>;
@@ -155,6 +159,21 @@ export class DatabaseStorage implements IStorage {
   async createMessage(message: InsertMessage) {
     const [newMessage] = await db.insert(messages).values(message).returning();
     return newMessage;
+  }
+
+  async getReviewsByProduct(productId: number) {
+    const productReviews = await db.select().from(reviews).where(eq(reviews.productId, productId)).orderBy(desc(reviews.createdAt));
+    const results = [];
+    for (const review of productReviews) {
+      const [user] = await db.select().from(users).where(eq(users.id, review.userId));
+      results.push({ ...review, user });
+    }
+    return results;
+  }
+
+  async createReview(review: InsertReview) {
+    const [newReview] = await db.insert(reviews).values(review).returning();
+    return newReview;
   }
 
   async getPromoByCode(code: string) {

@@ -105,6 +105,19 @@ export const orderItems = pgTable("order_items", {
 });
 
 // Schemas
+export const reviews = pgTable("reviews", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").notNull(),
+  userId: integer("user_id").notNull(),
+  rating: integer("rating").notNull(),
+  comment: text("comment"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertReviewSchema = createInsertSchema(reviews).omit({ id: true, createdAt: true });
+export type Review = typeof reviews.$inferSelect;
+export type InsertReview = z.infer<typeof insertReviewSchema>;
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,

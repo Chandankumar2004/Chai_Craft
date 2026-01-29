@@ -112,6 +112,26 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.status(201).json(message);
   });
 
+  // Reviews
+  app.get("/api/products/:id/reviews", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const reviews = await storage.getReviewsByProduct(id);
+    res.json(reviews);
+  });
+
+  app.post("/api/products/:id/reviews", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const productId = parseInt(req.params.id);
+    const { rating, comment } = req.body;
+    const review = await storage.createReview({
+      productId,
+      userId: (req.user as any).id,
+      rating: parseInt(rating),
+      comment
+    });
+    res.status(201).json(review);
+  });
+
   // Promos
   app.get("/api/promos/:code", async (req, res) => {
     const promo = await storage.getPromoByCode(req.params.code);
