@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Job, insertJobSchema, insertJobApplicationSchema } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Briefcase, MapPin, Clock, Trash2, Plus, Info, CheckCircle2 } from "lucide-react";
+import { Briefcase, MapPin, Clock, Trash2, Plus, Info, CheckCircle2, ChevronRight, ChevronLeft } from "lucide-react";
 import { useUser } from "@/hooks/use-auth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Careers() {
   const { data: user } = useUser();
@@ -22,6 +24,7 @@ export default function Careers() {
   const queryClient = useQueryClient();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [applyingJob, setApplyingJob] = useState<Job | null>(null);
+  const [step, setStep] = useState(1);
 
   const { data: jobs, isLoading } = useQuery<Job[]>({
     queryKey: ["/api/jobs"],
@@ -48,8 +51,14 @@ export default function Careers() {
       name: "",
       email: "",
       phone: "",
+      gender: "Prefer not to say",
       resumeUrl: "",
-      message: ""
+      message: "",
+      acceptedTerms: false,
+      answers: {
+        canCommute: "yes",
+        hasExperience: "no"
+      }
     }
   });
 
@@ -73,6 +82,7 @@ export default function Careers() {
       queryClient.invalidateQueries({ queryKey: ["/api/my-applications"] });
       toast({ title: "Application Submitted", description: "We'll be in touch soon!" });
       setApplyingJob(null);
+      setStep(1);
       applyForm.reset();
     }
   });
@@ -102,6 +112,23 @@ export default function Careers() {
     }
   });
 
+  const validateStep = async () => {
+    let fields: any[] = [];
+    if (step === 1) fields = ["name", "email", "phone", "gender"];
+    if (step === 2) fields = ["resumeUrl", "message"];
+    if (step === 3) fields = ["acceptedTerms"];
+
+    const result = await applyForm.trigger(fields as any);
+    if (result) setStep(step + 1);
+    else {
+      toast({ 
+        title: "Incomplete details", 
+        description: "Please fill all required fields correctly.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <Layout>
       <div className="bg-primary/5 py-20">
@@ -127,7 +154,7 @@ export default function Careers() {
                       <p className="font-bold text-lg">{jobs?.find(j => j.id === app.jobId)?.role || "Unknown Role"}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant="outline" className="capitalize">{app.status}</Badge>
-                        <p className="text-xs text-muted-foreground">Applied on {new Date(app.createdAt).toLocaleDateString()}</p>
+                        <p className="text-xs text-muted-foreground">Applied on {new Date(app.createdAt!).toLocaleDateString()}</p>
                       </div>
                     </div>
                     {app.status === 'pending' && (
@@ -181,7 +208,10 @@ export default function Careers() {
                   <p className="text-muted-foreground leading-relaxed line-clamp-3 mb-6">{job.description}</p>
                   
                   <div className="flex items-center justify-between">
-                    <Dialog open={applyingJob?.id === job.id} onOpenChange={(open) => setApplyingJob(open ? job : null)}>
+                    <Dialog open={applyingJob?.id === job.id} onOpenChange={(open) => {
+                      if (!open) setStep(1);
+                      setApplyingJob(open ? job : null);
+                    }}>
                       <DialogTrigger asChild>
                         <Button className="rounded-full px-8 h-11 bg-primary hover:bg-primary/90 text-white font-bold group-hover:scale-105 transition-all">
                           Apply Now
@@ -190,32 +220,129 @@ export default function Careers() {
                       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="text-2xl font-serif">Apply for {job.role}</DialogTitle>
-                          <DialogDescription>Submit your details and we'll get back to you shortly.</DialogDescription>
+                          <DialogDescription>Step {step} of 3: {step === 1 ? "Personal Details" : step === 2 ? "Experience & Info" : "Terms"}</DialogDescription>
                         </DialogHeader>
                         <Form {...applyForm}>
                           <form onSubmit={applyForm.handleSubmit((data) => {
                             applyMutation.mutate({ ...data, jobId: job.id });
                           })} className="space-y-5 py-4">
-                            <FormField control={applyForm.control} name="name" render={({ field }) => (
-                              <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input placeholder="John Doe" {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                            <div className="grid grid-cols-2 gap-4">
-                              <FormField control={applyForm.control} name="email" render={({ field }) => (
-                                <FormItem><FormLabel>Email Address</FormLabel><FormControl><Input type="email" placeholder="john@example.com" {...field} /></FormControl><FormMessage /></FormItem>
-                              )} />
-                              <FormField control={applyForm.control} name="phone" render={({ field }) => (
-                                <FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input placeholder="+91 XXXX XXX XXX" {...field} /></FormControl><FormMessage /></FormItem>
-                              )} />
+                            {step === 1 && (
+                              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                                <FormField control={applyForm.control} name="name" render={({ field }) => (
+                                  <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input placeholder="John Doe" {...field} /></FormControl><FormMessage /></FormItem>
+                                )} />
+                                <div className="grid grid-cols-2 gap-4">
+                                  <FormField control={applyForm.control} name="email" render={({ field }) => (
+                                    <FormItem><FormLabel>Email Address</FormLabel><FormControl><Input type="email" placeholder="john@example.com" {...field} /></FormControl><FormMessage /></FormItem>
+                                  )} />
+                                  <FormField control={applyForm.control} name="phone" render={({ field }) => (
+                                    <FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input placeholder="+91 XXXX XXX XXX" {...field} /></FormControl><FormMessage /></FormItem>
+                                  )} />
+                                </div>
+                                <FormField control={applyForm.control} name="gender" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Gender</FormLabel>
+                                    <FormControl>
+                                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                        <div className="flex items-center space-x-2">
+                                          <RadioGroupItem value="male" id="male" />
+                                          <label htmlFor="male" className="text-sm font-medium">Male</label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                          <RadioGroupItem value="female" id="female" />
+                                          <label htmlFor="female" className="text-sm font-medium">Female</label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                          <RadioGroupItem value="other" id="other" />
+                                          <label htmlFor="other" className="text-sm font-medium">Other</label>
+                                        </div>
+                                      </RadioGroup>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                              </div>
+                            )}
+
+                            {step === 2 && (
+                              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                                <FormField control={applyForm.control} name="resumeUrl" render={({ field }) => (
+                                  <FormItem><FormLabel>Resume Link (Google Drive/Dropbox)</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>
+                                )} />
+                                <FormField control={applyForm.control} name="message" render={({ field }) => (
+                                  <FormItem><FormLabel>Tell us about yourself</FormLabel><FormControl><Textarea rows={3} {...field} /></FormControl><FormMessage /></FormItem>
+                                )} />
+                                <div className="space-y-4">
+                                  <FormLabel className="text-base">Quick Questions</FormLabel>
+                                  <div className="grid gap-4 border rounded-xl p-4 bg-muted/30">
+                                    <FormField control={applyForm.control} name="answers.canCommute" render={({ field }) => (
+                                      <FormItem className="flex items-center justify-between">
+                                        <FormLabel className="text-sm">Can you commute to our location?</FormLabel>
+                                        <FormControl>
+                                          <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-2">
+                                            <div className="flex items-center space-x-1"><RadioGroupItem value="yes" id="q1-yes" /><label htmlFor="q1-yes" className="text-xs">Yes</label></div>
+                                            <div className="flex items-center space-x-1"><RadioGroupItem value="no" id="q1-no" /><label htmlFor="q1-no" className="text-xs">No</label></div>
+                                          </RadioGroup>
+                                        </FormControl>
+                                      </FormItem>
+                                    )} />
+                                    <FormField control={applyForm.control} name="answers.hasExperience" render={({ field }) => (
+                                      <FormItem className="flex items-center justify-between">
+                                        <FormLabel className="text-sm">Do you have prior experience?</FormLabel>
+                                        <FormControl>
+                                          <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-2">
+                                            <div className="flex items-center space-x-1"><RadioGroupItem value="yes" id="q2-yes" /><label htmlFor="q2-yes" className="text-xs">Yes</label></div>
+                                            <div className="flex items-center space-x-1"><RadioGroupItem value="no" id="q2-no" /><label htmlFor="q2-no" className="text-xs">No</label></div>
+                                          </RadioGroup>
+                                        </FormControl>
+                                      </FormItem>
+                                    )} />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {step === 3 && (
+                              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                                <div className="p-6 bg-muted/30 rounded-2xl text-sm space-y-4">
+                                  <h3 className="font-bold text-lg">Terms & Conditions</h3>
+                                  <p className="text-muted-foreground">By submitting this application, you agree to:</p>
+                                  <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                                    <li>Provide accurate and truthful information.</li>
+                                    <li>Allow us to contact you regarding this application.</li>
+                                    <li>Store your data for recruitment purposes only.</li>
+                                  </ul>
+                                </div>
+                                <FormField control={applyForm.control} name="acceptedTerms" render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-xl bg-primary/5 border-primary/20">
+                                    <FormControl>
+                                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                      <FormLabel className="text-sm font-bold cursor-pointer">I accept the terms and conditions</FormLabel>
+                                      <p className="text-xs text-muted-foreground">Required to proceed with the application.</p>
+                                    </div>
+                                  </FormItem>
+                                )} />
+                              </div>
+                            )}
+
+                            <div className="flex gap-3 pt-4">
+                              {step > 1 && (
+                                <Button type="button" variant="outline" className="flex-1 rounded-full" onClick={() => setStep(step - 1)}>
+                                  <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+                                </Button>
+                              )}
+                              {step < 3 ? (
+                                <Button type="button" className="flex-1 rounded-full bg-primary hover:bg-primary/90 text-white font-bold" onClick={validateStep}>
+                                  Next <ChevronRight className="w-4 h-4 ml-1" />
+                                </Button>
+                              ) : (
+                                <Button type="submit" className="flex-1 rounded-full bg-primary hover:bg-primary/90 text-white font-bold h-12" disabled={applyMutation.isPending || !applyForm.watch("acceptedTerms")}>
+                                  {applyMutation.isPending ? "Submitting..." : "Send Application"}
+                                </Button>
+                              )}
                             </div>
-                            <FormField control={applyForm.control} name="resumeUrl" render={({ field }) => (
-                              <FormItem><FormLabel>Resume Link (Google Drive/Dropbox)</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                            <FormField control={applyForm.control} name="message" render={({ field }) => (
-                              <FormItem><FormLabel>Why do you want to join us?</FormLabel><FormControl><Textarea rows={3} {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                            <Button type="submit" className="w-full h-12 text-lg font-bold" disabled={applyMutation.isPending}>
-                              {applyMutation.isPending ? "Submitting..." : "Send Application"}
-                            </Button>
                           </form>
                         </Form>
                       </DialogContent>

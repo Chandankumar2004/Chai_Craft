@@ -55,8 +55,11 @@ export const jobApplications = pgTable("job_applications", {
   name: text("name").notNull(),
   email: text("email").notNull(),
   phone: text("phone").notNull(),
+  gender: text("gender"),
+  answers: jsonb("answers"),
   resumeUrl: text("resume_url"),
   message: text("message"),
+  acceptedTerms: boolean("accepted_terms").notNull().default(false),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").defaultNow(),
 });
