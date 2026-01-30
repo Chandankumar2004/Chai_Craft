@@ -162,6 +162,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const id = parseInt(req.params.id);
     const { status } = req.body;
     const appData = await storage.updateJobApplicationStatus(id, status);
+    console.log(`[DEBUG] Updated job application status for ID ${id} to ${status}. appData:`, JSON.stringify(appData));
     const jobs = await storage.getJobs();
     const job = jobs.find(j => j.id === appData.jobId);
     const jobTitle = job ? job.role : "Position";
@@ -174,16 +175,18 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       try {
         const emailOptions = {
           from: 'Chai Craft <onboarding@resend.dev>',
-          to: appData.email,
+          to: 'chandan32005c@gmail.com',
           subject: `Job Application Status Update: ${jobTitle} - Chai Craft`,
           text: message,
         };
-        console.log(`[EMAIL] Attempting to send to ${appData.email}:`, JSON.stringify(emailOptions));
+        console.log(`[EMAIL] Attempting to send to chandan32005c@gmail.com:`, JSON.stringify(emailOptions));
         const result = await resend.emails.send(emailOptions);
-        console.log(`[EMAIL] Result for ${appData.email}:`, JSON.stringify(result));
+        console.log(`[EMAIL] Result for chandan32005c@gmail.com:`, JSON.stringify(result));
       } catch (error) {
         console.error('Failed to send email:', error);
       }
+    } else {
+      console.log(`[EMAIL] Skipping email send. resend exists: ${!!resend}, email match: ${appData.email === 'chandan32005c@gmail.com'}, email was: ${appData.email}`);
     }
     
     res.json(appData);
