@@ -156,7 +156,12 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.patch("/api/job-applications/:id", async (req, res) => {
     if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
     const id = parseInt(req.params.id);
-    const appData = await storage.updateJobApplicationStatus(id, req.body.status);
+    const { status } = req.body;
+    const appData = await storage.updateJobApplicationStatus(id, status);
+    
+    // Simulate Notification
+    console.log(`[NOTIFICATION] Status update for application #${id} (${appData.email}): Your application status is now ${status.toUpperCase()}.`);
+    
     res.json(appData);
   });
 
