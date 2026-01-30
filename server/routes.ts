@@ -7,6 +7,10 @@ import { z } from "zod";
 
 import { seed } from "./seed";
 
+import { Resend } from 'resend';
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   setupAuth(app);
   
@@ -160,7 +164,22 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const appData = await storage.updateJobApplicationStatus(id, status);
     
     // Simulate Notification
-    console.log(`[NOTIFICATION] Status update for application #${id} (${appData.email}): Your application status is now ${status.toUpperCase()}.`);
+    const message = `Status update for application #${id}: Your application status for ${appData.name} has been updated to ${status.toUpperCase()}.`;
+    console.log(`[NOTIFICATION] ${message}`);
+
+    if (resend && appData.email) {
+      try {
+        await resend.emails.send({
+          from: 'Chai Craft <onboarding@resend.dev>',
+          to: appData.email,
+          subject: 'Job Application Status Update - Chai Craft',
+          text: message,
+        });
+        console.log(`[EMAIL] Sent to ${appData.email}`);
+      } catch (error) {
+        console.error('Failed to send email:', error);
+      }
+    }
     
     res.json(appData);
   });
