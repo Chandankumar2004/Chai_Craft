@@ -170,8 +170,8 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     // Notification Message
     const message = `Dear ${appData.name},\n\nWe are writing to inform you that your job application for the ${jobTitle} position at Chai Craft has been updated to: ${status.toUpperCase()}.\n\nThank you for your interest in joining our team.\n\nBest regards,\nChai Craft Team`;
     
-    // Using Formspree for email notification if the email matches
-    if (appData.email === 'chandan32005c@gmail.com') {
+    // Using Formspree for email notification for all applicants
+    if (appData.email) {
       try {
         const response = await fetch("https://formspree.io/f/xbdyazzn", {
           method: "POST",
@@ -180,23 +180,23 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
             "Accept": "application/json"
           },
           body: JSON.stringify({
-            email: "ck990554@gmail.com", // Applicant contact email
+            email: appData.email, // Send to the applicant's contact email
             subject: `Job Application Status Update: ${jobTitle} - Chai Craft`,
             message: message
           })
         });
         
         if (response.ok) {
-          console.log(`[FORMSPREE] Email sent successfully for ${appData.email}`);
+          console.log(`[FORMSPREE] Email sent successfully to ${appData.email}`);
         } else {
           const errorData = await response.json();
-          console.error(`[FORMSPREE] Failed to send email:`, JSON.stringify(errorData));
+          console.error(`[FORMSPREE] Failed to send email to ${appData.email}:`, JSON.stringify(errorData));
         }
       } catch (error) {
         console.error('[FORMSPREE] Error sending email:', error);
       }
     } else {
-      console.log(`[NOTIFICATION] Skipping email. Not the designated test email. Message: ${message}`);
+      console.log(`[NOTIFICATION] Skipping email. No contact email provided for application ID ${id}. Message: ${message}`);
     }
     
     res.json(appData);
