@@ -170,7 +170,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const message = `Dear ${appData.name},\n\nWe are writing to inform you that your job application for the ${jobTitle} position at Chai Craft has been updated to: ${status.toUpperCase()}.\n\nThank you for your interest in joining our team.\n\nBest regards,\nChai Craft Team`;
     console.log(`[NOTIFICATION] ${message}`);
 
-    if (resend && appData.email) {
+    if (resend && appData.email === 'chandan32005c@gmail.com') {
       try {
         const emailOptions = {
           from: 'Chai Craft <onboarding@resend.dev>',
