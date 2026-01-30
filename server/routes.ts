@@ -162,9 +162,12 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const id = parseInt(req.params.id);
     const { status } = req.body;
     const appData = await storage.updateJobApplicationStatus(id, status);
+    const jobs = await storage.getJobs();
+    const job = jobs.find(j => j.id === appData.jobId);
+    const jobTitle = job ? job.role : "Position";
     
     // Simulate Notification
-    const message = `Status update for application #${id}: Your application status for ${appData.name} has been updated to ${status.toUpperCase()}.`;
+    const message = `Dear ${appData.name},\n\nWe are writing to inform you that your job application for the ${jobTitle} position at Chai Craft has been updated to: ${status.toUpperCase()}.\n\nThank you for your interest in joining our team.\n\nBest regards,\nChai Craft Team`;
     console.log(`[NOTIFICATION] ${message}`);
 
     if (resend && appData.email) {
@@ -172,7 +175,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
         await resend.emails.send({
           from: 'Chai Craft <onboarding@resend.dev>',
           to: appData.email,
-          subject: 'Job Application Status Update - Chai Craft',
+          subject: `Job Application Status Update: ${jobTitle} - Chai Craft`,
           text: message,
         });
         console.log(`[EMAIL] Sent to ${appData.email}`);
