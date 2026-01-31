@@ -167,19 +167,20 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const job = jobs.find(j => j.id === appData.jobId);
     const jobTitle = job ? job.role : "Position";
     
-    // Notification Message
-    const message = `Dear ${appData.name},\n\nWe are writing to inform you that your job application for the ${jobTitle} position at Chai Craft has been updated to: ${status.toUpperCase()}.\n\nThank you for your interest in joining our team.\n\nBest regards,\nChai Craft Team`;
+    // Notification Message Template
+    const emailSubject = "Job Application Status Update";
+    const emailBody = `Hello ${appData.name},\n\nYour application status has been updated.\n\nCurrent Status: ${status}\n\nWe will contact you if further steps are required.\n\nRegards,\nHR Team`;
     
     // Attempting to send via Resend and Formspree for robustness
     if (appData.email) {
-      // 1. Send via Resend
+      // 1. Send via Resend (Using required sender address)
       if (resend) {
         try {
           await resend.emails.send({
-            from: 'Chai Craft <onboarding@resend.dev>',
+            from: 'HR Team <chandan32005c@gmail.com>',
             to: appData.email,
-            subject: `Job Application Status Update: ${jobTitle} - Chai Craft`,
-            text: message,
+            subject: emailSubject,
+            text: emailBody,
           });
           console.log(`[RESEND] Email sent successfully to ${appData.email}`);
         } catch (error) {
@@ -197,8 +198,8 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
           },
           body: JSON.stringify({
             email: appData.email,
-            subject: `Job Application Status Update: ${jobTitle} - Chai Craft`,
-            message: message
+            subject: emailSubject,
+            message: emailBody
           })
         });
         
