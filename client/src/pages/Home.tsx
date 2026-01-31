@@ -26,7 +26,7 @@ export default function Home() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 3000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 
@@ -43,7 +43,7 @@ export default function Home() {
             <img 
               key={src}
               src={src} 
-              alt="Tea Garden" 
+              alt="" 
               className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${
                 index === currentImageIndex 
                   ? "translate-x-0 opacity-100 z-10" 
