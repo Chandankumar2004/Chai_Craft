@@ -175,13 +175,19 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     if (appData.email) {
       if (resend) {
         try {
-          await resend.emails.send({
-            from: 'HR Team <chandan32005c@gmail.com>',
+          const { data, error } = await resend.emails.send({
+            from: 'onboarding@resend.dev',
+            replyTo: 'chandan32005c@gmail.com',
             to: appData.email,
             subject: emailSubject,
             text: emailBody,
           });
-          console.log(`[RESEND] Email sent successfully to applicant: ${appData.email}`);
+          
+          if (error) {
+            console.error('[RESEND] API Error:', error);
+          } else {
+            console.log(`[RESEND] Email sent successfully to applicant: ${appData.email}, ID: ${data?.id}`);
+          }
         } catch (error) {
           console.error('[RESEND] Failed to send email via Resend:', error);
         }
