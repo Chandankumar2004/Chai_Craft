@@ -171,46 +171,20 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const emailSubject = "Job Application Status Update";
     const emailBody = `Hello ${appData.name},\n\nYour application status has been updated.\n\nCurrent Status: ${status}\n\nWe will contact you if further steps are required.\n\nRegards,\nHR Team`;
     
-    // Attempting to send via Resend and Formspree for robustness
+    // Attempting to send via Resend ONLY as requested
     if (appData.email) {
-      // 1. Send via Resend (Using required sender address)
       if (resend) {
         try {
           await resend.emails.send({
-            from: 'HR Team <onboarding@resend.dev>', // Note: Resend requires a verified domain or their onboarding email for test keys
-            replyTo: 'chandan32005c@gmail.com',
-            to: appData.email, // This is correctly sending to the applicant
+            from: 'HR Team <chandan32005c@gmail.com>',
+            to: appData.email,
             subject: emailSubject,
             text: emailBody,
           });
           console.log(`[RESEND] Email sent successfully to applicant: ${appData.email}`);
         } catch (error) {
-          console.error('[RESEND] Failed to send email:', error);
+          console.error('[RESEND] Failed to send email via Resend:', error);
         }
-      }
-
-      // 2. Send via Formspree (Sending to the applicant's email)
-      try {
-        const response = await fetch("https://formspree.io/f/xbdyazzn", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify({
-            email: appData.email, // This sends to the applicant
-            subject: emailSubject,
-            message: emailBody
-          })
-        });
-        
-        if (response.ok) {
-          console.log(`[FORMSPREE] Email sent successfully to applicant: ${appData.email}`);
-        } else {
-          console.error(`[FORMSPREE] Failed to send email to ${appData.email}`);
-        }
-      } catch (error) {
-        console.error('[FORMSPREE] Error sending email via Formspree:', error);
       }
     } else {
       console.log(`[NOTIFICATION] No email provided for application ID ${id}`);
