@@ -182,7 +182,18 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
             replyTo: 'chandan32005c@gmail.com',
             to: [appData.email],
             subject: emailSubject,
-            html: `<p>Hello ${appData.name},</p><p>Your application status has been updated.</p><p><strong>Current Status:</strong> ${status}</p><p>We will contact you if further steps are required.</p><p>Regards,<br>HR Team</p>`,
+            html: `
+              <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #4a3728;">Hello ${appData.name},</h2>
+                <p>Your application status has been updated for the position of <strong>${jobTitle}</strong>.</p>
+                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                  <p style="margin: 0;"><strong>Current Status:</strong> <span style="text-transform: capitalize;">${status}</span></p>
+                </div>
+                <p>We will contact you if further steps are required.</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="color: #666; font-size: 0.9em;">Regards,<br><strong>HR Team</strong><br>Chai Craft</p>
+              </div>
+            `,
           });
           
           if (error) {
@@ -217,7 +228,18 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
             replyTo: 'chandan32005c@gmail.com',
             to: [contactData.email],
             subject: emailSubject,
-            html: `<p>Hello ${contactData.name},</p><p>Thank you for reaching out to Chai Craft. We have received your message and will get back to you shortly.</p><p><strong>Your Message:</strong></p><p>${contactData.message}</p><p>Regards,<br>Chai Craft Team</p>`,
+            html: `
+              <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #4a3728;">Hello ${contactData.name},</h2>
+                <p>Thank you for reaching out to Chai Craft. We have received your message and will get back to you shortly.</p>
+                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                  <p style="margin: 0;"><strong>Your Message:</strong></p>
+                  <p style="color: #555; font-style: italic;">"${contactData.message}"</p>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="color: #666; font-size: 0.9em;">Regards,<br><strong>Chai Craft Team</strong></p>
+              </div>
+            `,
           });
           console.log(`[RESEND] Contact confirmation sent to: ${contactData.email}`);
         } catch (error) {
