@@ -43,8 +43,14 @@ export default function Home() {
             <img 
               key={src}
               src={src} 
-              alt={`Tea Plantation ${index + 1}`} 
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
+              alt="Tea Garden" 
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${
+                index === currentImageIndex 
+                  ? "translate-x-0 opacity-100 z-10" 
+                  : index < currentImageIndex 
+                    ? "-translate-x-full opacity-0 z-0" 
+                    : "translate-x-full opacity-0 z-0"
+              }`}
             />
           ))}
         </div>
