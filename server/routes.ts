@@ -9,7 +9,8 @@ import { seed } from "./seed";
 
 import { Resend } from 'resend';
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+// Initialize Resend with the new API key
+const resend = process.env.RESEND_API_KEY_NEW ? new Resend(process.env.RESEND_API_KEY_NEW) : null;
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   setupAuth(app);
@@ -175,9 +176,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     if (appData.email) {
       if (resend) {
         try {
-          // Send to the applicant
+          // Send to the applicant using verified domain
           const { data, error } = await resend.emails.send({
-            from: 'onboarding@resend.dev',
+            from: 'HR Team <hr@chaicraft.in>', // Using verified domain
             replyTo: 'chandan32005c@gmail.com',
             to: appData.email,
             subject: emailSubject,
