@@ -203,7 +203,30 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   // Messages
   app.post("/api/messages", async (req, res) => {
-    const message = await storage.createMessage(req.body);
+    const contactData = req.body;
+    
+    // Notification Message Template for Contact Form
+    const emailSubject = "Contact Form Submission Received";
+    const emailBody = `Hello ${contactData.name},\n\nThank you for reaching out to Chai Craft. We have received your message and will get back to you shortly.\n\nYour Message:\n${contactData.message}\n\nRegards,\nChai Craft Team`;
+    
+    if (contactData.email) {
+      if (resend) {
+        try {
+          await resend.emails.send({
+            from: 'Chai Craft <chandan32005c@gmail.com>',
+            replyTo: 'chandan32005c@gmail.com',
+            to: contactData.email,
+            subject: emailSubject,
+            text: emailBody,
+          });
+          console.log(`[RESEND] Contact confirmation sent to: ${contactData.email}`);
+        } catch (error) {
+          console.error('[RESEND] Failed to send contact confirmation:', error);
+        }
+      }
+    }
+    
+    const message = await storage.createMessage(contactData);
     res.status(201).json(message);
   });
 
