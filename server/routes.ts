@@ -178,7 +178,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
         try {
           await resend.emails.send({
             from: 'HR Team <onboarding@resend.dev>', // Note: Resend requires a verified domain or their onboarding email for test keys
-            reply_to: 'chandan32005c@gmail.com',
+            replyTo: 'chandan32005c@gmail.com',
             to: appData.email, // This is correctly sending to the applicant
             subject: emailSubject,
             text: emailBody,
