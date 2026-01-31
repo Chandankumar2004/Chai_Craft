@@ -18,7 +18,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-black/40 z-10" />
           {/* Unsplash tea plantation image */}
           <img 
-            src="https://images.unsplash.com/photo-1594631252845-29fc458695d7?q=80&w=2574&auto=format&fit=crop" 
+            src="https://images.unsplash.com/photo-1544733422-251e532ca221?q=80&w=2574&auto=format&fit=crop" 
             alt="Tea Plantation" 
             className="w-full h-full object-cover"
           />
