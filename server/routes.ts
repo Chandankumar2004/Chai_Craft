@@ -177,18 +177,19 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       if (resend) {
         try {
           await resend.emails.send({
-            from: 'HR Team <chandan32005c@gmail.com>',
-            to: appData.email,
+            from: 'HR Team <onboarding@resend.dev>', // Note: Resend requires a verified domain or their onboarding email for test keys
+            reply_to: 'chandan32005c@gmail.com',
+            to: appData.email, // This is correctly sending to the applicant
             subject: emailSubject,
             text: emailBody,
           });
-          console.log(`[RESEND] Email sent successfully to ${appData.email}`);
+          console.log(`[RESEND] Email sent successfully to applicant: ${appData.email}`);
         } catch (error) {
           console.error('[RESEND] Failed to send email:', error);
         }
       }
 
-      // 2. Send via Formspree
+      // 2. Send via Formspree (Sending to the applicant's email)
       try {
         const response = await fetch("https://formspree.io/f/xbdyazzn", {
           method: "POST",
@@ -197,14 +198,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
             "Accept": "application/json"
           },
           body: JSON.stringify({
-            email: appData.email,
+            email: appData.email, // This sends to the applicant
             subject: emailSubject,
             message: emailBody
           })
         });
         
         if (response.ok) {
-          console.log(`[FORMSPREE] Email sent successfully to ${appData.email}`);
+          console.log(`[FORMSPREE] Email sent successfully to applicant: ${appData.email}`);
         } else {
           console.error(`[FORMSPREE] Failed to send email to ${appData.email}`);
         }
