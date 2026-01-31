@@ -176,9 +176,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     if (appData.email) {
       if (resend) {
         try {
-          // Send to the applicant using verified domain
+          // Send to the applicant using specified sender email
           const { data, error } = await resend.emails.send({
-            from: 'HR Team <hr@chaicraft.in>', // Using verified domain
+            from: 'HR Team <chandan32005c@gmail.com>',
             replyTo: 'chandan32005c@gmail.com',
             to: appData.email,
             subject: emailSubject,
