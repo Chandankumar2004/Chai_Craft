@@ -190,17 +190,6 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
           } else {
             console.log(`[RESEND] Email sent successfully to applicant: ${appData.email}, ID: ${data?.id}`);
           }
-
-          // ALSO send a copy to the admin for verification (since it's a test/onboarding key)
-          if (appData.email !== 'chandan32005c@gmail.com') {
-            await resend.emails.send({
-              from: 'onboarding@resend.dev',
-              to: 'chandan32005c@gmail.com',
-              subject: `[COPY] ${emailSubject} - To: ${appData.email}`,
-              text: `Copy of email sent to ${appData.email}:\n\n${emailBody}`,
-            });
-            console.log(`[RESEND] Verification copy sent to admin: chandan32005c@gmail.com`);
-          }
         } catch (error) {
           console.error('[RESEND] Failed to send email via Resend:', error);
         }
