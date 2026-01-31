@@ -4,24 +4,49 @@ import { Link } from "wouter";
 import { useProducts } from "@/hooks/use-products";
 import { ProductCard } from "@/components/ProductCard";
 import { ArrowRight, Coffee, Leaf, Sun } from "lucide-react";
+import { useState, useEffect } from "react";
+
+const heroImages = [
+  "https://images.unsplash.com/photo-1544733422-251e532ca221?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1563911891280-14984576596e?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1594631252845-29fc458695d7?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1597481499666-130f8eb2c9cd?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1512539130762-b9134a62589e?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1582733306302-b445f4963c6b?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1611003228941-98a52e6dc4b5?q=80&w=2574&auto=format&fit=crop"
+];
 
 export default function Home() {
   const { data: products, isLoading } = useProducts();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
   const bestSellers = products?.filter(p => p.isBestSeller).slice(0, 3);
 
   return (
     <Layout>
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
-        {/* Background Image with Overlay */}
+        {/* Background Images with Overlay */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/40 z-10" />
-          {/* Unsplash tea plantation image */}
-          <img 
-            src="https://images.unsplash.com/photo-1544733422-251e532ca221?q=80&w=2574&auto=format&fit=crop" 
-            alt="Tea Plantation" 
-            className="w-full h-full object-cover"
-          />
+          {heroImages.map((src, index) => (
+            <img 
+              key={src}
+              src={src} 
+              alt={`Tea Plantation ${index + 1}`} 
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
+            />
+          ))}
         </div>
 
         <div className="container relative z-20 text-center text-white space-y-6 max-w-4xl px-4">
