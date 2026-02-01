@@ -63,7 +63,7 @@ export function registerChatRoutes(app: Express): void {
   app.post("/api/conversations/:id/messages", async (req: Request, res: Response) => {
     try {
       const conversationId = parseInt(req.params.id);
-      const { content } = req.body;
+      const { content, language } = req.body;
 
       // Save user message
       await chatStorage.createMessage(conversationId, "user", content);
@@ -73,11 +73,13 @@ export function registerChatRoutes(app: Express): void {
       const chatMessages = [
         {
           role: "system",
-          content: "You are the Chai Craft Assistant, a helpful AI for a premium tea shop. " +
-                   "IMPORTANT: You only answer questions related to Chai Craft's products (Tea, Coffee, Snacks), " +
-                   "orders, delivery, or tea-related information. If a user asks about anything else, " +
-                   "politely decline and redirect them to tea-related topics. " +
-                   "Keep responses concise and professional."
+          content: `You are the Chai Craft Assistant, a helpful AI for a premium tea shop. 
+                   CURRENT LANGUAGE: ${language === "hi" ? "Hindi (हिंदी)" : "English"}. 
+                   Respond in the language the user is speaking or specifically requested.
+                   IMPORTANT: You only answer questions related to Chai Craft's products (Tea, Coffee, Snacks), 
+                   orders, delivery, or tea-related information. If a user asks about anything else, 
+                   politely decline and redirect them to tea-related topics. 
+                   Keep responses concise and professional.`
         },
         ...messages.map((m) => ({
           role: m.role as "user" | "assistant",

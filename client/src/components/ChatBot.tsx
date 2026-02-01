@@ -7,8 +7,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Message, Conversation, ChatMessage } from "@shared/schema";
+import { useLanguage } from "@/hooks/use-language";
 
 export function ChatBot() {
+  const { language, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
@@ -36,7 +38,7 @@ export function ChatBot() {
       const res = await fetch(`/api/conversations/${activeConversationId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, language }),
       });
 
       if (!res.ok) throw new Error("Failed to send message");
@@ -96,7 +98,12 @@ export function ChatBot() {
     sendMessage.mutate(content);
   };
 
-  const QUICK_OPTIONS = [
+  const QUICK_OPTIONS = language === "hi" ? [
+    "अनुशंसित चाय",
+    "मेरे ऑर्डर को ट्रैक करें",
+    "हमारे बगीचे के बारे में",
+    "सहायता",
+  ] : [
     "Recommended Teas",
     "Track my Order",
     "About our Garden",
@@ -129,8 +136,8 @@ export function ChatBot() {
                 <Bot className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg font-serif">Support Chat</CardTitle>
-                <p className="text-[10px] opacity-80 uppercase tracking-widest">Always Online</p>
+                <CardTitle className="text-lg font-serif">{language === "hi" ? "सहायता चैट" : "Support Chat"}</CardTitle>
+                <p className="text-[10px] opacity-80 uppercase tracking-widest">{language === "hi" ? "हमेशा ऑनलाइन" : "Always Online"}</p>
               </div>
             </div>
             <Button
@@ -150,7 +157,7 @@ export function ChatBot() {
                     <Bot className="h-4 w-4 text-primary" />
                   </div>
                   <div className="bg-white border p-3 rounded-2xl rounded-tl-none text-sm max-w-[85%] shadow-sm">
-                    Hello! I'm your Chai Craft assistant. How can I help you today?
+                    {language === "hi" ? "नमस्ते! मैं आपका चाय क्राफ्ट सहायक हूँ। मैं आज आपकी क्या सहायता कर सकता हूँ?" : "Hello! I'm your Chai Craft assistant. How can I help you today?"}
                   </div>
                 </div>
 
@@ -194,7 +201,7 @@ export function ChatBot() {
                       <Bot className="h-4 w-4 text-primary" />
                     </div>
                     <div className="bg-white border p-3 rounded-2xl rounded-tl-none text-sm shadow-sm">
-                      Crafting a response...
+                      {language === "hi" ? "जवाब तैयार किया जा रहा है..." : "Crafting a response..."}
                     </div>
                   </div>
                 )}
@@ -204,7 +211,7 @@ export function ChatBot() {
           <CardFooter className="p-4 border-t bg-white">
             <form onSubmit={handleSubmit} className="flex w-full gap-2">
               <Input
-                placeholder="Ask about teas, orders..."
+                placeholder={language === "hi" ? "चाय, ऑर्डर के बारे में पूछें..." : "Ask about teas, orders..."}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="rounded-full bg-muted/30 border-none focus-visible:ring-primary"
