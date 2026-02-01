@@ -70,10 +70,20 @@ export function registerChatRoutes(app: Express): void {
 
       // Get conversation history for context
       const messages = await chatStorage.getMessagesByConversation(conversationId);
-      const chatMessages = messages.map((m) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      }));
+      const chatMessages = [
+        {
+          role: "system",
+          content: "You are the Chai Craft Assistant, a helpful AI for a premium tea shop. " +
+                   "IMPORTANT: You only answer questions related to Chai Craft's products (Tea, Coffee, Snacks), " +
+                   "orders, delivery, or tea-related information. If a user asks about anything else, " +
+                   "politely decline and redirect them to tea-related topics. " +
+                   "Keep responses concise and professional."
+        },
+        ...messages.map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        }))
+      ];
 
       // Set up SSE
       res.setHeader("Content-Type", "text/event-stream");
@@ -82,10 +92,10 @@ export function registerChatRoutes(app: Express): void {
 
       // Stream response from OpenAI
       const stream = await openai.chat.completions.create({
-        model: "gpt-5.1",
-        messages: chatMessages,
+        model: "gpt-5-mini",
+        messages: chatMessages as any,
         stream: true,
-        max_completion_tokens: 2048,
+        max_completion_tokens: 1024,
       });
 
       let fullResponse = "";

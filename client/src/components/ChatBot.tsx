@@ -88,65 +88,94 @@ export function ChatBot() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || sendMessage.isPending) return;
-    const content = input;
+  const handleSubmit = (e?: React.FormEvent, manualContent?: string) => {
+    e?.preventDefault();
+    const content = manualContent || input;
+    if (!content.trim() || sendMessage.isPending) return;
     setInput("");
     sendMessage.mutate(content);
   };
+
+  const QUICK_OPTIONS = [
+    "Recommended Teas",
+    "Track my Order",
+    "About our Garden",
+    "Support",
+  ];
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {!isOpen ? (
         <Button
           size="icon"
-          className="h-14 w-14 rounded-full shadow-2xl hover:scale-110 transition-transform"
+          className="h-14 w-14 rounded-full shadow-2xl hover:scale-110 transition-transform bg-primary text-primary-foreground border-4 border-white/20"
           onClick={handleOpen}
           data-testid="button-chat-open"
         >
           <MessageCircle className="h-6 w-6" />
         </Button>
       ) : (
-        <Card className="w-80 md:w-96 h-[500px] flex flex-col shadow-2xl border-primary/20 animate-in slide-in-from-bottom-5">
-          <CardHeader className="p-4 border-b flex flex-row items-center justify-between space-y-0 bg-primary text-primary-foreground rounded-t-lg">
-            <CardTitle className="text-lg font-serif flex items-center gap-2">
-              <Bot className="h-5 w-5" /> Chai Craft Assistant
-            </CardTitle>
+        <Card className="w-80 md:w-96 h-[550px] flex flex-col shadow-2xl border-primary/20 animate-in slide-in-from-bottom-5 overflow-hidden">
+          <CardHeader className="p-4 border-b flex flex-row items-center justify-between space-y-0 bg-primary text-primary-foreground">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/10 rounded-lg">
+                <Bot className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-serif">Support Chat</CardTitle>
+                <p className="text-[10px] opacity-80 uppercase tracking-widest">Always Online</p>
+              </div>
+            </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
+              className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20 rounded-full"
               onClick={() => setIsOpen(false)}
             >
               <X className="h-4 w-4" />
             </Button>
           </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-hidden">
+          <CardContent className="flex-1 p-0 overflow-hidden bg-muted/5">
             <ScrollArea className="h-full p-4" ref={scrollRef}>
               <div className="space-y-4">
                 <div className="flex gap-2">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <Bot className="h-4 w-4 text-primary" />
                   </div>
-                  <div className="bg-muted p-3 rounded-2xl rounded-tl-none text-sm max-w-[80%]">
-                    Hello! How can I help you enjoy your Chai Craft experience today?
+                  <div className="bg-white border p-3 rounded-2xl rounded-tl-none text-sm max-w-[85%] shadow-sm">
+                    Hello! I'm your Chai Craft assistant. How can I help you today?
                   </div>
                 </div>
+
+                <div className="flex flex-wrap gap-2 pl-10 mb-2">
+                  {QUICK_OPTIONS.map((option) => (
+                    <Button
+                      key={option}
+                      variant="outline"
+                      size="sm"
+                      className="text-[11px] rounded-full h-7 border-primary/20 hover:bg-primary hover:text-primary-foreground"
+                      onClick={() => handleSubmit(undefined, option)}
+                      disabled={sendMessage.isPending}
+                    >
+                      {option}
+                    </Button>
+                  ))}
+                </div>
+
                 {conversation?.messages.map((m) => (
                   <div
                     key={m.id}
                     className={`flex gap-2 ${m.role === "user" ? "flex-row-reverse" : ""}`}
                   >
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                      m.role === "user" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${
+                      m.role === "user" ? "bg-primary text-primary-foreground shadow-md" : "bg-primary/10 text-primary"
                     }`}>
                       {m.role === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
                     </div>
-                    <div className={`p-3 rounded-2xl text-sm max-w-[80%] ${
+                    <div className={`p-3 rounded-2xl text-sm max-w-[85%] shadow-sm ${
                       m.role === "user" 
                         ? "bg-primary text-primary-foreground rounded-tr-none" 
-                        : "bg-muted rounded-tl-none"
+                        : "bg-white border rounded-tl-none"
                     }`}>
                       {m.content}
                     </div>
@@ -154,27 +183,27 @@ export function ChatBot() {
                 ))}
                 {sendMessage.isPending && (
                   <div className="flex gap-2 animate-pulse">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       <Bot className="h-4 w-4 text-primary" />
                     </div>
-                    <div className="bg-muted p-3 rounded-2xl rounded-tl-none text-sm">
-                      Typing...
+                    <div className="bg-white border p-3 rounded-2xl rounded-tl-none text-sm shadow-sm">
+                      Crafting a response...
                     </div>
                   </div>
                 )}
               </div>
             </ScrollArea>
           </CardContent>
-          <CardFooter className="p-4 border-t">
+          <CardFooter className="p-4 border-t bg-white">
             <form onSubmit={handleSubmit} className="flex w-full gap-2">
               <Input
-                placeholder="Type your message..."
+                placeholder="Ask about teas, orders..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="rounded-full"
+                className="rounded-full bg-muted/30 border-none focus-visible:ring-primary"
                 data-testid="input-chat"
               />
-              <Button size="icon" type="submit" disabled={!input.trim() || sendMessage.isPending}>
+              <Button size="icon" type="submit" disabled={!input.trim() || sendMessage.isPending} className="rounded-full">
                 <Send className="h-4 w-4" />
               </Button>
             </form>
