@@ -32,6 +32,7 @@ function Router() {
 }
 
 import { LanguageProvider } from "@/hooks/use-language";
+import { ChatBot } from "@/components/ChatBot";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
       <LanguageProvider>
         <TooltipProvider>
           <Router />
+          <ChatBot />
           <Toaster />
         </TooltipProvider>
       </LanguageProvider>

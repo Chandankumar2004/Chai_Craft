@@ -12,8 +12,11 @@ import { Resend } from 'resend';
 // Initialize Resend with the new API key
 const resend = process.env.RESEND_API_KEY_NEW ? new Resend(process.env.RESEND_API_KEY_NEW) : null;
 
+import { registerChatRoutes } from "./replit_integrations/chat";
+
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   setupAuth(app);
+  registerChatRoutes(app);
   
   // Initialize seed data
   seed().catch(console.error);
