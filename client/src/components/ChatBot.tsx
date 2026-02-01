@@ -104,8 +104,15 @@ export function ChatBot() {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      {!isOpen ? (
+    <>
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-md z-[60] animate-in fade-in duration-300" 
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+      <div className={`fixed bottom-6 right-6 ${isOpen ? "z-[70]" : "z-50"}`}>
+        {!isOpen ? (
         <Button
           size="icon"
           className="h-14 w-14 rounded-full shadow-2xl hover:scale-110 transition-transform bg-primary text-primary-foreground border-4 border-white/20"
