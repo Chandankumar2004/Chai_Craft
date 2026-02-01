@@ -218,5 +218,6 @@ export function ChatBot() {
         </Card>
       )}
     </div>
+    </>
   );
 }
