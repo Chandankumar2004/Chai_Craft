@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageCircle, Send, X, Bot, User } from "lucide-react";
+import { MessageCircle, Send, X, Bot, User, Languages } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -10,7 +10,7 @@ import { Message, Conversation, ChatMessage } from "@shared/schema";
 import { useLanguage } from "@/hooks/use-language";
 
 export function ChatBot() {
-  const { language, t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
@@ -98,6 +98,10 @@ export function ChatBot() {
     sendMessage.mutate(content);
   };
 
+  const toggleLanguage = () => {
+    setLanguage(language === "en" ? "hi" : "en");
+  };
+
   const QUICK_OPTIONS = language === "hi" ? [
     "अनुशंसित चाय",
     "मेरे ऑर्डर को ट्रैक करें",
@@ -130,7 +134,7 @@ export function ChatBot() {
         </Button>
       ) : (
         <Card className="w-80 md:w-96 h-[550px] flex flex-col shadow-2xl border-primary/20 animate-in slide-in-from-bottom-5 overflow-hidden">
-          <CardHeader className="p-4 border-b flex flex-row items-center justify-between space-y-0 bg-primary text-primary-foreground">
+          <CardHeader className="p-4 border-b flex flex-row items-center justify-between gap-2 space-y-0 bg-primary text-primary-foreground">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/10 rounded-lg">
                 <Bot className="h-5 w-5" />
@@ -140,14 +144,25 @@ export function ChatBot() {
                 <p className="text-[10px] opacity-80 uppercase tracking-widest">{language === "hi" ? "हमेशा ऑनलाइन" : "Always Online"}</p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20 rounded-full"
-              onClick={() => setIsOpen(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20 rounded-full"
+                onClick={toggleLanguage}
+                title={language === "en" ? "Switch to Hindi" : "Switch to English"}
+              >
+                <Languages className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20 rounded-full"
+                onClick={() => setIsOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="flex-1 p-0 overflow-hidden bg-muted/5">
             <ScrollArea className="h-full p-4" ref={scrollRef}>
@@ -189,7 +204,7 @@ export function ChatBot() {
                     <div className={`p-3 rounded-2xl text-sm max-w-[85%] shadow-sm ${
                       m.role === "user" 
                         ? "bg-primary text-primary-foreground rounded-tr-none" 
-                        : "bg-white border rounded-tl-none"
+                        : "bg-white border rounded-tl-none prose prose-sm prose-stone dark:prose-invert"
                     }`}>
                       {m.content}
                     </div>
