@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Review, InsertReview, User } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useAuth } from "@/hooks/use-auth";
+import { useUser } from "@/hooks/use-auth";
 import { Star, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,7 +21,7 @@ interface ReviewSectionProps {
 }
 
 export function ReviewSection({ productId }: ReviewSectionProps) {
-  const { user } = useAuth();
+  const { data: user } = useUser();
   const { toast } = useToast();
   const { data: reviews, isLoading } = useQuery<ReviewWithUser[]>({
     queryKey: ["/api/products", productId, "reviews"],
@@ -116,6 +116,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
                           placeholder="Share your thoughts about this product..."
                           className="min-h-[100px]"
                           {...field}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />

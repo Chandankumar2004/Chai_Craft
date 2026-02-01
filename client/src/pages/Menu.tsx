@@ -4,14 +4,20 @@ import { useProducts } from "@/hooks/use-products";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, ShoppingBag } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useCart } from "@/hooks/use-cart";
+import { ReviewSection } from "@/components/ReviewSection";
+import { Product } from "@shared/schema";
 
 const CATEGORIES = ["All", "Tea", "Coffee", "Snacks"];
 
 export default function Menu() {
   const { data: products, isLoading } = useProducts();
+  const { addItem } = useCart();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const filteredProducts = products?.filter((product) => {
     const matchesCategory = activeCategory === "All" || product.category === activeCategory;
@@ -74,11 +80,73 @@ export default function Menu() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {filteredProducts?.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div key={product.id} onClick={() => setSelectedProduct(product)} className="cursor-pointer">
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
         )}
       </div>
+
+      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          {selectedProduct && (
+            <div className="space-y-8">
+              <DialogHeader>
+                <DialogTitle className="font-serif text-3xl font-bold flex items-center justify-between">
+                  <span>{selectedProduct.name}</span>
+                  <span className="text-primary">₹{(selectedProduct.price / 100).toFixed(0)}</span>
+                </DialogTitle>
+                {selectedProduct.hindiName && (
+                  <p className="text-xl text-primary font-medium">{selectedProduct.hindiName}</p>
+                )}
+              </DialogHeader>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <img 
+                  src={selectedProduct.imageUrl} 
+                  alt={selectedProduct.name} 
+                  className="w-full rounded-2xl shadow-lg object-cover aspect-square"
+                />
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <h3 className="font-bold text-lg">Description</h3>
+                    <p className="text-muted-foreground leading-relaxed">{selectedProduct.description}</p>
+                  </div>
+                  
+                  {selectedProduct.ingredients && (
+                    <div className="space-y-2">
+                      <h3 className="font-bold text-lg">Ingredients</h3>
+                      <p className="text-muted-foreground">{selectedProduct.ingredients}</p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-4">
+                    <div className="text-sm font-medium">
+                      Weight: <span className="text-muted-foreground">{selectedProduct.weight || "N/A"}</span>
+                    </div>
+                    <Button 
+                      size="lg" 
+                      className="rounded-full px-8"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addItem(selectedProduct);
+                        setSelectedProduct(null);
+                      }}
+                    >
+                      <ShoppingBag className="w-5 h-5 mr-2" /> Add to Cart
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t pt-8">
+                <ReviewSection productId={selectedProduct.id} />
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }
