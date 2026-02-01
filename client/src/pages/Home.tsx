@@ -13,10 +13,10 @@ const heroImages = [
   "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1594631252845-29fc458695d7?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1597481499666-130f8eb2c9cd?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1444491741275-3747c53c99b4?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1506459225024-1428097a7e18?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1582733306302-b445f4963c6b?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1501333194171-aa187d4b1e54?q=80&w=2574&auto=format&fit=crop"
+  "https://images.unsplash.com/photo-1542601906970-34f970404f5d?q=80&w=2574&auto=format&fit=crop"
 ];
 
 export default function Home() {
