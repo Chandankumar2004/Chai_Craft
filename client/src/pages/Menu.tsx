@@ -1,16 +1,27 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Layout } from "@/components/Layout";
 import { useProducts } from "@/hooks/use-products";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ShoppingBag } from "lucide-react";
+import { Search, ShoppingBag, SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCart } from "@/hooks/use-cart";
 import { ReviewSection } from "@/components/ReviewSection";
 import { Product } from "@shared/schema";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuCheckboxItem
+} from "@/components/ui/dropdown-menu";
 
 const CATEGORIES = ["All", "Tea", "Coffee", "Snacks"];
+
+type SortOption = "name-asc" | "name-desc" | "price-asc" | "price-desc";
 
 export default function Menu() {
   const { data: products, isLoading } = useProducts();
@@ -18,13 +29,32 @@ export default function Menu() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [sortOption, setSortOption] = useState<SortOption>("name-asc");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]); // in rupees
 
-  const filteredProducts = products?.filter((product) => {
-    const matchesCategory = activeCategory === "All" || product.category === activeCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          product.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredAndSortedProducts = useMemo(() => {
+    if (!products) return [];
+
+    let filtered = products.filter((product) => {
+      const matchesCategory = activeCategory === "All" || product.category === activeCategory;
+      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            product.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      const priceInRupees = product.price / 100;
+      const matchesPrice = priceInRupees >= priceRange[0] && priceInRupees <= priceRange[1];
+      
+      return matchesCategory && matchesSearch && matchesPrice;
+    });
+
+    return filtered.sort((a, b) => {
+      switch (sortOption) {
+        case "name-asc": return a.name.localeCompare(b.name);
+        case "name-desc": return b.name.localeCompare(a.name);
+        case "price-asc": return a.price - b.price;
+        case "price-desc": return b.price - a.price;
+        default: return 0;
+      }
+    });
+  }, [products, activeCategory, searchQuery, sortOption, priceRange]);
 
   return (
     <Layout>
@@ -38,30 +68,126 @@ export default function Menu() {
       </div>
 
       <div className="container mx-auto px-4 pb-20">
-        <div className="flex flex-col md:flex-row gap-8 mb-12 items-center justify-between">
-          {/* Categories */}
-          <div className="flex flex-wrap gap-2 justify-center">
-            {CATEGORIES.map((category) => (
-              <Button
-                key={category}
-                variant={activeCategory === category ? "default" : "outline"}
-                onClick={() => setActiveCategory(category)}
-                className="rounded-full px-6"
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
+        <div className="flex flex-col gap-6 mb-12">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            {/* Categories */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              {CATEGORIES.map((category) => (
+                <Button
+                  key={category}
+                  variant={activeCategory === category ? "default" : "outline"}
+                  onClick={() => setActiveCategory(category)}
+                  className="rounded-full px-6"
+                  data-testid={`button-category-${category.toLowerCase()}`}
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
 
-          {/* Search */}
-          <div className="relative w-full md:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input 
-              placeholder="Search menu..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 rounded-full"
-            />
+            {/* Actions Bar */}
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <div className="relative flex-1 md:w-72">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input 
+                  placeholder="Search menu..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 rounded-full"
+                  data-testid="input-search-menu"
+                />
+              </div>
+
+              {/* Sorting */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon" className="rounded-full shrink-0" data-testid="button-sort">
+                    <ArrowUpDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Sort By</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuCheckboxItem 
+                    checked={sortOption === "name-asc"} 
+                    onCheckedChange={() => setSortOption("name-asc")}
+                  >
+                    Name (A-Z)
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem 
+                    checked={sortOption === "name-desc"} 
+                    onCheckedChange={() => setSortOption("name-desc")}
+                  >
+                    Name (Z-A)
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem 
+                    checked={sortOption === "price-asc"} 
+                    onCheckedChange={() => setSortOption("price-asc")}
+                  >
+                    Price (Low to High)
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem 
+                    checked={sortOption === "price-desc"} 
+                    onCheckedChange={() => setSortOption("price-desc")}
+                  >
+                    Price (High to Low)
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Filters */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon" className="rounded-full shrink-0" data-testid="button-filter">
+                    <SlidersHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Price Range</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <div className="p-2 space-y-4">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>₹{priceRange[0]}</span>
+                      <span>₹{priceRange[1]}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button 
+                        variant={priceRange[1] <= 50 ? "secondary" : "ghost"} 
+                        size="sm" 
+                        onClick={() => setPriceRange([0, 50])}
+                        className="text-xs h-7"
+                      >
+                        Under ₹50
+                      </Button>
+                      <Button 
+                        variant={priceRange[0] === 50 && priceRange[1] === 100 ? "secondary" : "ghost"} 
+                        size="sm" 
+                        onClick={() => setPriceRange([50, 100])}
+                        className="text-xs h-7"
+                      >
+                        ₹50 - ₹100
+                      </Button>
+                      <Button 
+                        variant={priceRange[0] === 100 ? "secondary" : "ghost"} 
+                        size="sm" 
+                        onClick={() => setPriceRange([100, 1000])}
+                        className="text-xs h-7"
+                      >
+                        Over ₹100
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setPriceRange([0, 1000])}
+                        className="text-xs h-7"
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
 
@@ -72,14 +198,21 @@ export default function Menu() {
               <div key={i} className="h-80 bg-gray-200 animate-pulse rounded-xl" />
             ))}
           </div>
-        ) : filteredProducts?.length === 0 ? (
+        ) : filteredAndSortedProducts.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">
             <p className="text-xl">No items found.</p>
-            <Button variant="ghost" onClick={() => {setActiveCategory("All"); setSearchQuery("");}}>Clear filters</Button>
+            <Button variant="ghost" onClick={() => {
+              setActiveCategory("All"); 
+              setSearchQuery(""); 
+              setPriceRange([0, 1000]);
+              setSortOption("name-asc");
+            }}>
+              Clear all filters
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredProducts?.map((product) => (
+            {filteredAndSortedProducts.map((product) => (
               <div key={product.id} onClick={() => setSelectedProduct(product)} className="cursor-pointer">
                 <ProductCard product={product} />
               </div>
