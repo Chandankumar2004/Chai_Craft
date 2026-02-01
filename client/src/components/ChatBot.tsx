@@ -6,7 +6,7 @@ import { MessageCircle, Send, X, Bot, User } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Message, Conversation } from "@shared/schema";
+import { Message, Conversation, ChatMessage } from "@shared/schema";
 
 export function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +14,7 @@ export function ChatBot() {
   const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { data: conversation } = useQuery<Conversation & { messages: Message[] }>({
+  const { data: conversation } = useQuery<Conversation & { messages: ChatMessage[] }>({
     queryKey: ["/api/conversations", activeConversationId],
     enabled: activeConversationId !== null,
   });
