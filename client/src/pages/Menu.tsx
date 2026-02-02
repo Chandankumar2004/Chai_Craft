@@ -4,7 +4,7 @@ import { useProducts } from "@/hooks/use-products";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ShoppingBag, SlidersHorizontal, ArrowUpDown, Plus, Minus } from "lucide-react";
+import { Search, ShoppingBag, SlidersHorizontal, ArrowUpDown, Plus, Minus, Leaf } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCart } from "@/hooks/use-cart";
 import { useLanguage } from "@/hooks/use-language";
@@ -264,50 +264,68 @@ export default function Menu() {
                       <div className="text-sm font-medium">
                         Weight: <span className="text-muted-foreground">{selectedProduct.weight || "N/A"}</span>
                       </div>
-                      {(() => {
-                        const itemInCart = useCart.getState().items.find(i => i.id === selectedProduct.id);
-                        const quantity = itemInCart?.quantity || 0;
+                      <div className="flex flex-col items-end gap-3">
+                        {(() => {
+                          const itemInCart = useCart.getState().items.find(i => i.id === selectedProduct.id);
+                          const quantity = itemInCart?.quantity || 0;
+                          
+                          return quantity > 0 ? (
+                            <div className="flex items-center gap-4 bg-primary/5 rounded-full p-1 border border-primary/20">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-10 w-10 rounded-full text-primary hover:bg-primary/10"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  useCart.getState().updateQuantity(selectedProduct.id, quantity - 1);
+                                }}
+                              >
+                                <Minus className="h-5 w-5" />
+                              </Button>
+                              <span className="w-8 text-center font-bold text-xl">{quantity}</span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-10 w-10 rounded-full text-primary hover:bg-primary/10"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  useCart.getState().addItem(selectedProduct);
+                                }}
+                              >
+                                <Plus className="h-5 w-5" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button 
+                              size="lg" 
+                              className="rounded-full px-8"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addItem(selectedProduct);
+                              }}
+                            >
+                              <ShoppingBag className="w-5 h-5 mr-2" /> 
+                              {t("cart.add")}
+                            </Button>
+                          );
+                        })()}
                         
-                        return quantity > 0 ? (
-                          <div className="flex items-center gap-4 bg-primary/5 rounded-full p-1 border border-primary/20">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-10 w-10 rounded-full text-primary hover:bg-primary/10"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                useCart.getState().updateQuantity(selectedProduct.id, quantity - 1);
-                              }}
-                            >
-                              <Minus className="h-5 h-5" />
-                            </Button>
-                            <span className="w-8 text-center font-bold text-xl">{quantity}</span>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-10 w-10 rounded-full text-primary hover:bg-primary/10"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                useCart.getState().addItem(selectedProduct);
-                              }}
-                            >
-                              <Plus className="h-5 h-5" />
-                            </Button>
-                          </div>
-                        ) : (
-                          <Button 
-                            size="lg" 
-                            className="rounded-full px-8"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              addItem(selectedProduct);
-                            }}
-                          >
-                            <ShoppingBag className="w-5 h-5 mr-2" /> 
-                            {t("cart.add")}
-                          </Button>
-                        );
-                      })()}
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="rounded-full flex items-center gap-2 border-accent/30 text-accent hover:bg-accent/10"
+                          onClick={() => {
+                            // This would ideally open a guide or trigger a tip
+                            const guide = selectedProduct.category === "Tea" 
+                              ? "Steep in boiling water for 3-5 minutes with a splash of milk and ginger for the perfect cup."
+                              : "Best enjoyed hot with a sprinkle of cocoa or cold over ice.";
+                            alert(`Brewing Guide: ${guide}`);
+                          }}
+                        >
+                          <Leaf className="w-4 h-4" />
+                          Brewing Guide
+                        </Button>
+                      </div>
                     </div>
                 </div>
               </div>

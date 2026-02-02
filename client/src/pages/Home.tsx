@@ -4,7 +4,7 @@ import { Link } from "wouter";
 import { useProducts } from "@/hooks/use-products";
 import { ProductCard } from "@/components/ProductCard";
 import { Recommendations } from "@/components/Recommendations";
-import { ArrowRight, Coffee, Leaf, Sun } from "lucide-react";
+import { ArrowRight, Coffee, Leaf, Sun, Sparkles } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@/hooks/use-auth";
 
@@ -93,6 +93,29 @@ export default function Home() {
             <Link href="/menu">
               <Button size="lg" className="rounded-full px-8 py-6 text-lg bg-accent text-accent-foreground hover:bg-white hover:text-primary transition-all duration-300 shadow-xl shadow-black/40">
                 Explore Our Menu <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Brew Tips */}
+      <section className="py-12 bg-accent/5">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 bg-white p-8 rounded-3xl shadow-sm border border-accent/10">
+            <div className="w-20 h-20 bg-accent/10 rounded-2xl flex items-center justify-center shrink-0">
+              <Sparkles className="w-10 h-10 text-accent" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-serif text-2xl font-bold text-primary">Tea Master Tip</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                For the most authentic Masala Chai experience, brew your tea with fresh grated ginger and crushed cardamom. 
+                Let it simmer with milk until it turns a deep, rich ochre color.
+              </p>
+            </div>
+            <Link href="/menu">
+              <Button variant="ghost" className="text-accent font-bold hover:bg-accent/5 rounded-full">
+                Try it now
               </Button>
             </Link>
           </div>
