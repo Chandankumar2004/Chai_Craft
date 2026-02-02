@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Star, StarHalf, MessageSquare } from "lucide-react";
+import { Plus, Minus, Star, StarHalf, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -22,6 +22,7 @@ export function ProductCard({ product }: { product: Product }) {
   const [newComment, setNewComment] = useState("");
 
   const addItem = useCart((state) => state.addItem);
+  const updateQuantity = useCart((state) => state.updateQuantity);
   const items = useCart((state) => state.items);
   const itemInCart = items.find((item) => item.id === product.id);
   const quantity = itemInCart?.quantity || 0;
@@ -158,26 +159,44 @@ export function ProductCard({ product }: { product: Product }) {
         <span className="text-lg font-bold text-primary">
           {formatPrice(product.price)}
         </span>
-        <Button 
-          onClick={(e) => {
-            e.stopPropagation();
-            addItem(product);
-          }}
-          className={`rounded-full shadow-md hover:shadow-lg transition-all ${
-            quantity > 0 ? "bg-accent text-accent-foreground" : "bg-secondary text-white"
-          }`}
-          size="sm"
-        >
-          {quantity > 0 ? (
-            <span className="flex items-center gap-1">
-              <Plus className="w-4 h-4" /> {quantity}
-            </span>
-          ) : (
-            <span className="flex items-center gap-1">
-              <Plus className="w-4 h-4" /> {t("cart.add")}
-            </span>
-          )}
-        </Button>
+        {quantity > 0 ? (
+          <div className="flex items-center gap-2 bg-accent/10 rounded-full p-1 border border-accent/20">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full text-accent hover:bg-accent/20"
+              onClick={(e) => {
+                e.stopPropagation();
+                updateQuantity(product.id, quantity - 1);
+              }}
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+            <span className="w-8 text-center font-bold text-accent">{quantity}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full text-accent hover:bg-accent/20"
+              onClick={(e) => {
+                e.stopPropagation();
+                addItem(product);
+              }}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <Button 
+            onClick={(e) => {
+              e.stopPropagation();
+              addItem(product);
+            }}
+            className="rounded-full bg-secondary hover:bg-secondary/90 text-white shadow-md hover:shadow-lg transition-all"
+            size="sm"
+          >
+            <Plus className="w-4 h-4 mr-1" /> {t("cart.add")}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

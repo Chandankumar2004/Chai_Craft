@@ -4,7 +4,7 @@ import { useProducts } from "@/hooks/use-products";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ShoppingBag, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { Search, ShoppingBag, SlidersHorizontal, ArrowUpDown, Plus, Minus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCart } from "@/hooks/use-cart";
 import { useLanguage } from "@/hooks/use-language";
@@ -264,19 +264,50 @@ export default function Menu() {
                       <div className="text-sm font-medium">
                         Weight: <span className="text-muted-foreground">{selectedProduct.weight || "N/A"}</span>
                       </div>
-                      <Button 
-                        size="lg" 
-                        className="rounded-full px-8"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addItem(selectedProduct);
-                        }}
-                      >
-                        <ShoppingBag className="w-5 h-5 mr-2" /> 
-                        {useCart.getState().items.find(i => i.id === selectedProduct.id) 
-                          ? `${t("cart.add")} (${useCart.getState().items.find(i => i.id === selectedProduct.id)?.quantity})`
-                          : t("cart.add")}
-                      </Button>
+                      {(() => {
+                        const itemInCart = useCart.getState().items.find(i => i.id === selectedProduct.id);
+                        const quantity = itemInCart?.quantity || 0;
+                        
+                        return quantity > 0 ? (
+                          <div className="flex items-center gap-4 bg-primary/5 rounded-full p-1 border border-primary/20">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-full text-primary hover:bg-primary/10"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                useCart.getState().updateQuantity(selectedProduct.id, quantity - 1);
+                              }}
+                            >
+                              <Minus className="h-5 h-5" />
+                            </Button>
+                            <span className="w-8 text-center font-bold text-xl">{quantity}</span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-full text-primary hover:bg-primary/10"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                useCart.getState().addItem(selectedProduct);
+                              }}
+                            >
+                              <Plus className="h-5 h-5" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button 
+                            size="lg" 
+                            className="rounded-full px-8"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              addItem(selectedProduct);
+                            }}
+                          >
+                            <ShoppingBag className="w-5 h-5 mr-2" /> 
+                            {t("cart.add")}
+                          </Button>
+                        );
+                      })()}
                     </div>
                 </div>
               </div>
