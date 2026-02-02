@@ -258,22 +258,24 @@ export default function Menu() {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between pt-4">
-                    <div className="text-sm font-medium">
-                      Weight: <span className="text-muted-foreground">{selectedProduct.weight || "N/A"}</span>
+                    <div className="flex items-center justify-between pt-4">
+                      <div className="text-sm font-medium">
+                        Weight: <span className="text-muted-foreground">{selectedProduct.weight || "N/A"}</span>
+                      </div>
+                      <Button 
+                        size="lg" 
+                        className="rounded-full px-8"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addItem(selectedProduct);
+                        }}
+                      >
+                        <ShoppingBag className="w-5 h-5 mr-2" /> 
+                        {useCart.getState().items.find(i => i.id === selectedProduct.id) 
+                          ? `${t("cart.add")} (${useCart.getState().items.find(i => i.id === selectedProduct.id)?.quantity})`
+                          : t("cart.add")}
+                      </Button>
                     </div>
-                    <Button 
-                      size="lg" 
-                      className="rounded-full px-8"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addItem(selectedProduct);
-                        setSelectedProduct(null);
-                      }}
-                    >
-                      <ShoppingBag className="w-5 h-5 mr-2" /> Add to Cart
-                    </Button>
-                  </div>
                 </div>
               </div>
 

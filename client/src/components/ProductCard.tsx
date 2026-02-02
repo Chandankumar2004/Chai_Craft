@@ -14,13 +14,17 @@ import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-auth";
 
 export function ProductCard({ product }: { product: Product }) {
-  const addItem = useCart((state) => state.addItem);
   const { t, language } = useLanguage();
   const { data: user } = useUser();
   const { toast } = useToast();
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState("");
+
+  const addItem = useCart((state) => state.addItem);
+  const items = useCart((state) => state.items);
+  const itemInCart = items.find((item) => item.id === product.id);
+  const quantity = itemInCart?.quantity || 0;
 
   const { data: reviews = [], isLoading: reviewsLoading } = useQuery<any[]>({
     queryKey: ["/api/products", product.id, "reviews"],
@@ -155,11 +159,24 @@ export function ProductCard({ product }: { product: Product }) {
           {formatPrice(product.price)}
         </span>
         <Button 
-          onClick={() => addItem(product)}
-          className="rounded-full bg-secondary hover:bg-secondary/90 text-white shadow-md hover:shadow-lg transition-all"
+          onClick={(e) => {
+            e.stopPropagation();
+            addItem(product);
+          }}
+          className={`rounded-full shadow-md hover:shadow-lg transition-all ${
+            quantity > 0 ? "bg-accent text-accent-foreground" : "bg-secondary text-white"
+          }`}
           size="sm"
         >
-          <Plus className="w-4 h-4 mr-1" /> {t("cart.add")}
+          {quantity > 0 ? (
+            <span className="flex items-center gap-1">
+              <Plus className="w-4 h-4" /> {quantity}
+            </span>
+          ) : (
+            <span className="flex items-center gap-1">
+              <Plus className="w-4 h-4" /> {t("cart.add")}
+            </span>
+          )}
         </Button>
       </CardFooter>
     </Card>
