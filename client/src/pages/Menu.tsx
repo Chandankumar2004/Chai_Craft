@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Search, ShoppingBag, SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCart } from "@/hooks/use-cart";
+import { useLanguage } from "@/hooks/use-language";
 import { ReviewSection } from "@/components/ReviewSection";
 import { Product } from "@shared/schema";
 import { 
@@ -26,6 +27,7 @@ type SortOption = "name-asc" | "name-desc" | "price-asc" | "price-desc";
 export default function Menu() {
   const { data: products, isLoading } = useProducts();
   const { addItem } = useCart();
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
