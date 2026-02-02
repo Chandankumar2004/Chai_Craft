@@ -4,11 +4,10 @@ import { Link } from "wouter";
 import { useProducts } from "@/hooks/use-products";
 import { ProductCard } from "@/components/ProductCard";
 import { ArrowRight, Coffee, Leaf, Sun } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-const heroImages = [
+const teaGardenImages = [
   "https://images.unsplash.com/photo-1544733422-251e532ca221?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1563911891280-14984576596e?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1594631252845-29fc458695d7?q=80&w=2574&auto=format&fit=crop",
@@ -16,57 +15,87 @@ const heroImages = [
   "https://images.unsplash.com/photo-1506459225024-1428097a7e18?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1523906630133-f113565a4d56?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1542601906970-34f970404f5d?q=80&w=2574&auto=format&fit=crop"
+  "https://images.unsplash.com/photo-1542601906970-34f970404f5d?q=80&w=2574&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1563911891280-14984576596e?q=80&w=2574&auto=format&fit=crop"
 ];
 
 export default function Home() {
   const { data: products, isLoading } = useProducts();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [scrollPos, setScrollPos] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [direction, setDirection] = useState(1); // 1 for right, -1 for left
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    let animationId: number;
+    const scroll = () => {
+      setScrollPos((prev) => {
+        const next = prev + (0.5 * direction);
+        // Infinite scroll logic: if we move too far, we'll loop
+        // But for a simple smooth transition, we just let it flow
+        return next;
+      });
+      animationId = requestAnimationFrame(scroll);
+    };
+    animationId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(animationId);
+  }, [direction]);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const { clientX } = e;
+    const { innerWidth } = window;
+    // If mouse is on the right half, move right (direction 1)
+    // If mouse is on the left half, move left (direction -1)
+    if (clientX > innerWidth / 2) {
+      setDirection(1);
+    } else {
+      setDirection(-1);
+    }
+  };
 
   const bestSellers = products?.filter(p => p.isBestSeller).slice(0, 3);
 
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
-        {/* Background Images with Overlay */}
+      <section 
+        className="relative h-[600px] flex items-center justify-center overflow-hidden cursor-none"
+        onMouseMove={handleMouseMove}
+      >
+        {/* Continuous Scrolling Background */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-black/40 z-10" />
-          {heroImages.map((src, index) => (
-            <img 
-              key={src}
-              src={src} 
-              alt="" 
-              className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${
-                index === currentImageIndex 
-                  ? "translate-x-0 opacity-100 z-10" 
-                  : index < currentImageIndex 
-                    ? "-translate-x-full opacity-0 z-0" 
-                    : "translate-x-full opacity-0 z-0"
-              }`}
-            />
-          ))}
+          <div className="absolute inset-0 bg-black/50 z-10" />
+          <div 
+            className="flex h-full transition-transform duration-100 ease-linear"
+            style={{ 
+              transform: `translateX(${-scrollPos % (teaGardenImages.length * 100)}vw)`,
+              width: `${teaGardenImages.length * 300}vw`
+            }}
+          >
+            {/* Render images multiple times for seamless looping */}
+            {[...teaGardenImages, ...teaGardenImages, ...teaGardenImages].map((src, index) => (
+              <div key={`${src}-${index}`} className="relative h-full w-[100vw] shrink-0">
+                <img 
+                  src={src} 
+                  alt="" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="container relative z-20 text-center text-white space-y-6 max-w-4xl px-4">
-          <h1 className="font-serif text-5xl md:text-7xl font-bold leading-tight animate-in fade-in slide-in-from-bottom-6 duration-1000">
+        <div className="container relative z-20 text-center text-white space-y-6 max-w-4xl px-4 pointer-events-none">
+          <h1 className="font-serif text-5xl md:text-7xl font-bold leading-tight drop-shadow-2xl">
             Experience the Art of <br/> 
             <span className="text-accent italic">Perfect Chai</span>
           </h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-            Handpicked leaves, authentic spices, and brewed with passion. 
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-lg">
+            Handpicked leaves from the finest tea gardens, authentic spices, and brewed with passion. 
             Discover the flavors that bring people together.
           </p>
-          <div className="pt-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+          <div className="pt-4 pointer-events-auto">
             <Link href="/menu">
-              <Button size="lg" className="rounded-full px-8 py-6 text-lg bg-accent text-accent-foreground hover:bg-white hover:text-primary transition-all duration-300 shadow-xl shadow-black/20">
+              <Button size="lg" className="rounded-full px-8 py-6 text-lg bg-accent text-accent-foreground hover:bg-white hover:text-primary transition-all duration-300 shadow-xl shadow-black/40">
                 Explore Our Menu <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
