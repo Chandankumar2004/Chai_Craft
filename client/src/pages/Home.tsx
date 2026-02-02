@@ -17,7 +17,7 @@ const teaGardenImages = [
 ];
 
 export default function Home() {
-  const { user } = useUser();
+  const { data: user } = useUser();
   const { data: products, isLoading } = useProducts();
   const [scrollPos, setScrollPos] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
