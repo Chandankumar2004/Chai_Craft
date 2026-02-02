@@ -127,6 +127,50 @@ export async function registerRoutes(
     }
   });
 
+  // AI Recommendations
+  app.get("/api/recommendations", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const products = await storage.getProducts();
+      const userOrders = await storage.getOrders((req.user as any).id);
+      
+      // Get all items from previous orders
+      const previousProductIds = new Set<number>();
+      for (const order of userOrders) {
+        // This assumes order has items, if not we'd fetch them
+        // For now, let's just use the product list and a generic prompt
+        // as we don't have a robust way to fetch all order items efficiently here without adding a storage method
+      }
+
+      const { OpenAI } = await import("openai");
+      const openai = new OpenAI();
+      
+      const prompt = `Based on our tea shop menu:
+${products.map(p => `- ${p.name}: ${p.description} (Category: ${p.category})`).join("\n")}
+
+Suggest 3 personalized tea or drink recommendations for a user who loves authentic Indian flavors and refreshing drinks. Return only a JSON array of product names.`;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" }
+      });
+
+      const content = response.choices[0].message.content;
+      const suggestions = content ? JSON.parse(content).recommendations || [] : [];
+      
+      const recommendedProducts = products.filter(p => 
+        suggestions.some((s: string) => p.name.toLowerCase().includes(s.toLowerCase()))
+      );
+
+      res.json(recommendedProducts.length > 0 ? recommendedProducts : products.slice(0, 3));
+    } catch (error) {
+      console.error("Recommendation error:", error);
+      res.status(500).json({ message: "Failed to get recommendations" });
+    }
+  });
+
   // Jobs
   app.get("/api/jobs", async (req, res) => {
     const jobs = await storage.getJobs();

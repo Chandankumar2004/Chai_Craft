@@ -197,4 +197,21 @@ export type InsertOrder = z.infer<typeof insertOrderSchema>;
 export type OrderItem = typeof orderItems.$inferSelect;
 export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
 
+export const userPreferences = pgTable("user_preferences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  teaPreferences: jsonb("tea_preferences"), // flavor profiles, caffeine level, etc.
+  dietaryRestrictions: text("dietary_restrictions"),
+  favoriteIngredients: jsonb("favorite_ingredients"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertUserPreferenceSchema = createInsertSchema(userPreferences).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type UserPreference = typeof userPreferences.$inferSelect;
+export type InsertUserPreference = z.infer<typeof insertUserPreferenceSchema>;
+
 export * from "./models/chat";

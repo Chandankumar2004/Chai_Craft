@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useProducts } from "@/hooks/use-products";
 import { ProductCard } from "@/components/ProductCard";
+import { Recommendations } from "@/components/Recommendations";
 import { ArrowRight, Coffee, Leaf, Sun } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { useUser } from "@/hooks/use-auth";
 
 const teaGardenImages = [
   "https://images.unsplash.com/photo-1544733422-251e532ca221?q=80&w=2574&auto=format&fit=crop",
@@ -15,6 +17,7 @@ const teaGardenImages = [
 ];
 
 export default function Home() {
+  const { user } = useUser();
   const { data: products, isLoading } = useProducts();
   const [scrollPos, setScrollPos] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,6 +98,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Recommendations for logged in users */}
+      {user && <Recommendations />}
 
       {/* Features */}
       <section className="py-20 bg-background">
