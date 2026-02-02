@@ -11,12 +11,7 @@ const teaGardenImages = [
   "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1594631252845-29fc458695d7?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1512727317027-4174b33fbfa0?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1506459225024-1428097a7e18?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1523906630133-f113565a4d56?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1542601906970-34f970404f5d?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1563911891280-14984576596e?q=80&w=2574&auto=format&fit=crop"
+  "https://images.unsplash.com/photo-1512727317027-4174b33fbfa0?q=80&w=2574&auto=format&fit=crop"
 ];
 
 export default function Home() {
@@ -29,9 +24,7 @@ export default function Home() {
     let animationId: number;
     const scroll = () => {
       setScrollPos((prev) => {
-        const next = prev + (0.5 * direction);
-        // Infinite scroll logic: if we move too far, we'll loop
-        // But for a simple smooth transition, we just let it flow
+        const next = prev + (0.1 * direction);
         return next;
       });
       animationId = requestAnimationFrame(scroll);
@@ -58,7 +51,7 @@ export default function Home() {
     <Layout>
       {/* Hero Section */}
       <section 
-        className="relative h-[600px] flex items-center justify-center overflow-hidden cursor-none"
+        className="relative h-[600px] flex items-center justify-center overflow-hidden"
         onMouseMove={handleMouseMove}
       >
         {/* Continuous Scrolling Background */}
