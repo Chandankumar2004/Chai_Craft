@@ -86,107 +86,111 @@ export default function Menu() {
             </div>
 
             {/* Actions Bar */}
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <div className="relative flex-1 md:w-72">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
+              <div className="relative w-full md:w-72">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary h-4 w-4" />
                 <Input 
                   placeholder="Search menu..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 rounded-full"
+                  className="pl-10 rounded-full border-primary/20 focus-visible:ring-primary h-10"
                   data-testid="input-search-menu"
                 />
               </div>
 
-              {/* Sorting */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" className="rounded-full shrink-0" data-testid="button-sort">
-                    <ArrowUpDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Sort By</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuCheckboxItem 
-                    checked={sortOption === "name-asc"} 
-                    onCheckedChange={() => setSortOption("name-asc")}
-                  >
-                    Name (A-Z)
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem 
-                    checked={sortOption === "name-desc"} 
-                    onCheckedChange={() => setSortOption("name-desc")}
-                  >
-                    Name (Z-A)
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem 
-                    checked={sortOption === "price-asc"} 
-                    onCheckedChange={() => setSortOption("price-asc")}
-                  >
-                    Price (Low to High)
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem 
-                    checked={sortOption === "price-desc"} 
-                    onCheckedChange={() => setSortOption("price-desc")}
-                  >
-                    Price (High to Low)
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex items-center gap-2 w-full md:w-auto justify-center">
+                {/* Sorting */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="default" className="rounded-full flex items-center gap-2 border-primary/20 hover:border-primary h-10 px-4" data-testid="button-sort">
+                      <ArrowUpDown className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">Sort</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuLabel>Sort By</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuCheckboxItem 
+                      checked={sortOption === "name-asc"} 
+                      onCheckedChange={() => setSortOption("name-asc")}
+                    >
+                      Name (A-Z)
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem 
+                      checked={sortOption === "name-desc"} 
+                      onCheckedChange={() => setSortOption("name-desc")}
+                    >
+                      Name (Z-A)
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem 
+                      checked={sortOption === "price-asc"} 
+                      onCheckedChange={() => setSortOption("price-asc")}
+                    >
+                      Price (Low to High)
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem 
+                      checked={sortOption === "price-desc"} 
+                      onCheckedChange={() => setSortOption("price-desc")}
+                    >
+                      Price (High to Low)
+                    </DropdownMenuCheckboxItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-              {/* Filters */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" className="rounded-full shrink-0" data-testid="button-filter">
-                    <SlidersHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Price Range</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <div className="p-2 space-y-4">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>₹{priceRange[0]}</span>
-                      <span>₹{priceRange[1]}</span>
+                {/* Filters */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="default" className="rounded-full flex items-center gap-2 border-primary/20 hover:border-primary h-10 px-4" data-testid="button-filter">
+                      <SlidersHorizontal className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">Filter</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-64 p-2">
+                    <DropdownMenuLabel className="px-2 pt-2">Price Range</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <div className="space-y-3 p-2">
+                      <div className="flex items-center justify-between px-1">
+                        <span className="text-xs font-semibold text-primary">₹{priceRange[0]}</span>
+                        <span className="text-xs font-semibold text-primary">₹{priceRange[1]}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button 
+                          variant={priceRange[1] <= 50 ? "default" : "outline"} 
+                          size="sm" 
+                          onClick={() => setPriceRange([0, 50])}
+                          className="text-[11px] h-8 rounded-lg"
+                        >
+                          Under ₹50
+                        </Button>
+                        <Button 
+                          variant={priceRange[0] === 50 && priceRange[1] === 100 ? "default" : "outline"} 
+                          size="sm" 
+                          onClick={() => setPriceRange([50, 100])}
+                          className="text-[11px] h-8 rounded-lg"
+                        >
+                          ₹50 - ₹100
+                        </Button>
+                        <Button 
+                          variant={priceRange[0] === 100 ? "default" : "outline"} 
+                          size="sm" 
+                          onClick={() => setPriceRange([100, 1000])}
+                          className="text-[11px] h-8 rounded-lg"
+                        >
+                          Over ₹100
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => setPriceRange([0, 1000])}
+                          className="text-[11px] h-8 rounded-lg hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          Reset
+                        </Button>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button 
-                        variant={priceRange[1] <= 50 ? "secondary" : "ghost"} 
-                        size="sm" 
-                        onClick={() => setPriceRange([0, 50])}
-                        className="text-xs h-7"
-                      >
-                        Under ₹50
-                      </Button>
-                      <Button 
-                        variant={priceRange[0] === 50 && priceRange[1] === 100 ? "secondary" : "ghost"} 
-                        size="sm" 
-                        onClick={() => setPriceRange([50, 100])}
-                        className="text-xs h-7"
-                      >
-                        ₹50 - ₹100
-                      </Button>
-                      <Button 
-                        variant={priceRange[0] === 100 ? "secondary" : "ghost"} 
-                        size="sm" 
-                        onClick={() => setPriceRange([100, 1000])}
-                        className="text-xs h-7"
-                      >
-                        Over ₹100
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => setPriceRange([0, 1000])}
-                        className="text-xs h-7"
-                      >
-                        Reset
-                      </Button>
-                    </div>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </div>
         </div>
