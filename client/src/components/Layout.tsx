@@ -6,6 +6,9 @@ import { ShoppingCart, Menu, User as UserIcon, LogOut, Package, Youtube, Faceboo
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import logoImg from "@assets/ChatGPT_Image_Jan_17__2026__12_39_49_PM-removebg-preview_1769163582832.png";
+import founder1 from "@assets/founder1.png";
+import founder2 from "@assets/founder2.png";
+import founder3 from "@assets/founder3.png";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -290,6 +293,65 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <main className="flex-1 page-transition">
         {children}
       </main>
+
+      {/* Our Story Section */}
+      <section className="py-24 bg-[#fffdfa] border-t">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <span className="text-accent font-bold tracking-widest text-xs uppercase">Our Story</span>
+            <h2 className="font-serif text-5xl md:text-6xl font-bold text-[#7d3c15] leading-tight">From Craving to Purpose</h2>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              The journey of <span className="text-[#7d3c15] font-bold">Chai Craft</span> began with a simple craving. What started as a search for authentic taste became a mission for purity and heritage.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            {[
+              { img: founder1, name: "Founder", desc: "Vision & Growth" },
+              { img: founder2, name: "Co-Founder", desc: "Ops & Quality" },
+              { img: founder3, name: "Master Blender", desc: "Tradition & Taste" }
+            ].map((person, idx) => (
+              <div key={idx} className="group flex flex-col items-center">
+                <div className="relative w-full aspect-[3/4] overflow-hidden rounded-3xl mb-6 shadow-xl shadow-black/5 group-hover:shadow-2xl group-hover:shadow-black/10 transition-all duration-500">
+                  <img src={person.img} alt={person.name} className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
+                </div>
+                <div className="bg-white px-10 py-6 rounded-2xl shadow-lg shadow-black/5 border border-accent/5 -mt-12 relative z-10 w-[85%] text-center">
+                  <h3 className="font-serif text-xl font-bold text-[#7d3c15]">{person.name}</h3>
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-3">{person.desc}</p>
+                  <div className="flex justify-center">
+                    <a href="#" className="p-2 bg-[#0077b5] text-white rounded-md hover:opacity-90 transition-opacity">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            {[
+              { num: "01", title: "The Beginning", text: "A personal experience sparked the vision of hygienic traditional tea for a modern lifestyle." },
+              { num: "02", title: "The First Step", text: "Started from a home kitchen, crafting unique blends with discipline and absolute purity." },
+              { num: "03", title: "Today & Beyond", text: "Growing steadily as a trusted name in traditional snacks and teas for health-conscious lovers." }
+            ].map((step, idx) => (
+              <Card key={idx} className="p-8 border-none bg-white shadow-sm hover:shadow-md transition-shadow">
+                <span className="inline-block px-3 py-1 bg-accent/10 text-accent font-bold rounded-lg mb-4">{step.num}</span>
+                <h4 className="font-serif text-xl font-bold mb-3">{step.title}</h4>
+                <p className="text-muted-foreground text-sm leading-relaxed">{step.text}</p>
+              </Card>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button className="bg-[#7d3c15] text-white px-10 py-7 rounded-2xl text-lg font-bold shadow-lg shadow-[#7d3c15]/20 hover-elevate">
+              Read Our Full Story
+            </Button>
+            <Button variant="outline" className="border-[#7d3c15] text-[#7d3c15] px-10 py-7 rounded-2xl text-lg font-bold hover:bg-[#7d3c15]/5">
+              Experience the Taste
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* Our Core Values Section */}
       <section className="py-20 bg-muted/20 border-t">
