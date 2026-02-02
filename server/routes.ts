@@ -7,17 +7,22 @@ import { z } from "zod";
 
 import { seed } from "./seed";
 
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 // Initialize Resend with the new API key
-const resend = process.env.RESEND_API_KEY_NEW ? new Resend(process.env.RESEND_API_KEY_NEW) : null;
+const resend = process.env.RESEND_API_KEY_NEW
+  ? new Resend(process.env.RESEND_API_KEY_NEW)
+  : null;
 
 import { registerChatRoutes } from "./replit_integrations/chat";
 
-export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
+export async function registerRoutes(
+  httpServer: Server,
+  app: Express,
+): Promise<Server> {
   setupAuth(app);
   registerChatRoutes(app);
-  
+
   // Initialize seed data
   seed().catch(console.error);
 
@@ -28,7 +33,8 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.post("/api/products", async (req, res) => {
-    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
+      return res.sendStatus(403);
     const parsed = insertProductSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(parsed.error);
     const product = await storage.createProduct(parsed.data);
@@ -36,14 +42,16 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.put("/api/products/:id", async (req, res) => {
-    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
+      return res.sendStatus(403);
     const id = parseInt(req.params.id);
     const product = await storage.updateProduct(id, req.body);
     res.json(product);
   });
 
   app.delete("/api/products/:id", async (req, res) => {
-    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
+      return res.sendStatus(403);
     const id = parseInt(req.params.id);
     await storage.deleteProduct(id);
     res.sendStatus(200);
@@ -51,7 +59,8 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   // Orders
   app.patch("/api/orders/:id/status", async (req, res) => {
-    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
+      return res.sendStatus(403);
     const id = parseInt(req.params.id);
     const { status, paymentStatus } = req.body;
     try {
@@ -65,10 +74,17 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   app.post("/api/orders", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    
+
     // items: { productId: number, quantity: number }[]
-    const { items, deliveryAddress, totalAmount, promoCode, giftCardCode, discountAmount } = req.body;
-    
+    const {
+      items,
+      deliveryAddress,
+      totalAmount,
+      promoCode,
+      giftCardCode,
+      discountAmount,
+    } = req.body;
+
     // Validate stock and calculate price (simplified)
     const orderItemsData = [];
     for (const item of items) {
@@ -77,28 +93,31 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       orderItemsData.push({
         productId: item.productId,
         quantity: item.quantity,
-        priceAtTime: product.price
+        priceAtTime: product.price,
       });
     }
 
-    const order = await storage.createOrder({
-      userId: (req.user as any).id,
-      totalAmount,
-      discountAmount: discountAmount || 0,
-      promoCode: promoCode || null,
-      giftCardCode: giftCardCode || null,
-      deliveryAddress,
-      paymentMethod: "UPI",
-      status: "pending",
-      paymentStatus: "pending_verification"
-    }, orderItemsData as any);
+    const order = await storage.createOrder(
+      {
+        userId: (req.user as any).id,
+        totalAmount,
+        discountAmount: discountAmount || 0,
+        promoCode: promoCode || null,
+        giftCardCode: giftCardCode || null,
+        deliveryAddress,
+        paymentMethod: "UPI",
+        status: "pending",
+        paymentStatus: "pending_verification",
+      },
+      orderItemsData as any,
+    );
 
     res.status(201).json(order);
   });
 
   app.get("/api/orders", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    
+
     if ((req.user as any).role === "admin") {
       const orders = await storage.getAllOrders();
       return res.json(orders);
@@ -115,20 +134,23 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.post("/api/jobs", async (req, res) => {
-    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
+      return res.sendStatus(403);
     const job = await storage.createJob(req.body);
     res.status(201).json(job);
   });
 
   app.patch("/api/jobs/:id", async (req, res) => {
-    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
+      return res.sendStatus(403);
     const id = parseInt(req.params.id);
     const job = await storage.updateJob(id, req.body);
     res.json(job);
   });
 
   app.delete("/api/jobs/:id", async (req, res) => {
-    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
+      return res.sendStatus(403);
     const id = parseInt(req.params.id);
     await storage.deleteJob(id);
     res.sendStatus(200);
@@ -136,14 +158,18 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   // Job Applications
   app.get("/api/job-applications", async (req, res) => {
-    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
+      return res.sendStatus(403);
     const apps = await storage.getJobApplications();
     res.json(apps);
   });
 
   app.get("/api/my-applications", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    const apps = await storage.getJobApplications(undefined, (req.user as any).id);
+    const apps = await storage.getJobApplications(
+      undefined,
+      (req.user as any).id,
+    );
     res.json(apps);
   });
 
@@ -162,27 +188,31 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.patch("/api/job-applications/:id", async (req, res) => {
-    if (!req.isAuthenticated() || (req.user as any).role !== "admin") return res.sendStatus(403);
+    if (!req.isAuthenticated() || (req.user as any).role !== "admin")
+      return res.sendStatus(403);
     const id = parseInt(req.params.id);
     const { status } = req.body;
     const appData = await storage.updateJobApplicationStatus(id, status);
-    console.log(`[DEBUG] Updated job application status for ID ${id} to ${status}. appData:`, JSON.stringify(appData));
+    console.log(
+      `[DEBUG] Updated job application status for ID ${id} to ${status}. appData:`,
+      JSON.stringify(appData),
+    );
     const jobs = await storage.getJobs();
-    const job = jobs.find(j => j.id === appData.jobId);
+    const job = jobs.find((j) => j.id === appData.jobId);
     const jobTitle = job ? job.role : "Position";
-    
+
     // Notification Message Template
     const emailSubject = "Job Application Status Update";
     const emailBody = `Hello ${appData.name},\n\nYour application status has been updated.\n\nCurrent Status: ${status}\n\nWe will contact you if further steps are required.\n\nRegards,\nHR Team`;
-    
+
     // Attempting to send via Resend ONLY as requested
     if (appData.email) {
       if (resend) {
         try {
           // Send to the applicant
           const { data, error } = await resend.emails.send({
-            from: 'Chai Craft <onboarding@resend.dev>',
-            replyTo: 'chandan32005c@gmail.com',
+            from: "Chai Craft <onboarding@resend.dev>",
+            replyTo: "chandan32005c@gmail.com",
             to: [appData.email],
             subject: emailSubject,
             html: `
@@ -198,37 +228,39 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
               </div>
             `,
           });
-          
+
           if (error) {
-            console.error('[RESEND] API Error (Applicant):', error);
+            console.error("[RESEND] API Error (Applicant):", error);
           } else {
-            console.log(`[RESEND] Email sent successfully to applicant: ${appData.email}, ID: ${data?.id}`);
+            console.log(
+              `[RESEND] Email sent successfully to applicant: ${appData.email}, ID: ${data?.id}`,
+            );
           }
         } catch (error) {
-          console.error('[RESEND] Failed to send email via Resend:', error);
+          console.error("[RESEND] Failed to send email via Resend:", error);
         }
       }
     } else {
       console.log(`[NOTIFICATION] No email provided for application ID ${id}`);
     }
-    
+
     res.json(appData);
   });
 
   // Messages
   app.post("/api/messages", async (req, res) => {
     const contactData = req.body;
-    
+
     // Notification Message Template for Contact Form
     const emailSubject = "Contact Form Submission Received";
     const emailBody = `Hello ${contactData.name},\n\nThank you for reaching out to Chai Craft. We have received your message and will get back to you shortly.\n\nYour Message:\n${contactData.message}\n\nRegards,\nChai Craft Team`;
-    
+
     if (contactData.email) {
       if (resend) {
         try {
           await resend.emails.send({
-            from: 'Chai Craft <onboarding@resend.dev>',
-            replyTo: 'chandan32005c@gmail.com',
+            from: "Chai Craft <onboarding@resend.dev>",
+            replyTo: "chandan32005c@gmail.com",
             to: [contactData.email],
             subject: emailSubject,
             html: `
@@ -244,13 +276,15 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
               </div>
             `,
           });
-          console.log(`[RESEND] Contact confirmation sent to: ${contactData.email}`);
+          console.log(
+            `[RESEND] Contact confirmation sent to: ${contactData.email}`,
+          );
         } catch (error) {
-          console.error('[RESEND] Failed to send contact confirmation:', error);
+          console.error("[RESEND] Failed to send contact confirmation:", error);
         }
       }
     }
-    
+
     const message = await storage.createMessage(contactData);
     res.status(201).json(message);
   });
@@ -270,7 +304,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       productId,
       userId: (req.user as any).id,
       rating: parseInt(rating),
-      comment
+      comment,
     });
     res.status(201).json(review);
   });
