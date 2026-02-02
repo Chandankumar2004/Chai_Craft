@@ -292,6 +292,50 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
+      {/* Our Core Values Section */}
+      <section className="py-20 bg-muted/20 border-t">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="font-serif text-4xl font-bold text-primary mb-4">Our Core Values</h2>
+            <p className="text-muted-foreground text-lg">
+              At Chai Craft, our commitment to quality goes beyond the cup. We believe in transparency, sustainability, and the art of traditional brewing.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="p-8 text-center space-y-4 hover-elevate border-accent/10">
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent">
+                <Leaf className="w-8 h-8" />
+              </div>
+              <h3 className="font-serif text-xl font-bold">100% Organic</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                We source only the finest organic tea leaves, free from pesticides and artificial additives, directly from the lush gardens of India.
+              </p>
+            </Card>
+
+            <Card className="p-8 text-center space-y-4 hover-elevate border-accent/10">
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent">
+                <Shield className="w-8 h-8" />
+              </div>
+              <h3 className="font-serif text-xl font-bold">Quality Assured</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Every batch undergoes rigorous quality checks and manual tasting by our tea masters to ensure a consistent, premium experience.
+              </p>
+            </Card>
+
+            <Card className="p-8 text-center space-y-4 hover-elevate border-accent/10">
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent">
+                <Package className="w-8 h-8" />
+              </div>
+              <h3 className="font-serif text-xl font-bold">Sustainable Packaging</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                We are committed to the planet. Our packaging is eco-friendly and biodegradable, ensuring that our tea leaves no footprint behind.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       <footer className="border-t bg-muted/30 mt-auto">
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 text-center md:text-left">
