@@ -129,10 +129,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </Button>
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 hover:text-primary" data-testid="button-cart">
-                <ShoppingCart className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 hover:text-primary group transition-all duration-300 hover:scale-110 active:scale-95" data-testid="button-cart">
+                <ShoppingCart className="h-5 w-5 group-hover:animate-bounce" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-bold shadow-sm">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-bold shadow-sm group-hover:bg-accent transition-colors">
                     {cartCount}
                   </span>
                 )}
