@@ -302,8 +302,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="p-8 text-center space-y-4 hover-elevate border-accent/10">
-              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent">
+            <Card className="p-8 text-center space-y-4 hover-elevate border-accent/10 group transition-all duration-300 hover:bg-accent/5">
+              <div className="w-16 h-16 bg-accent/10 group-hover:bg-accent rounded-full flex items-center justify-center mx-auto text-accent group-hover:text-white transition-colors duration-300">
                 <Leaf className="w-8 h-8" />
               </div>
               <h3 className="font-serif text-xl font-bold">100% Organic</h3>
@@ -312,8 +312,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </p>
             </Card>
 
-            <Card className="p-8 text-center space-y-4 hover-elevate border-accent/10">
-              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent">
+            <Card className="p-8 text-center space-y-4 hover-elevate border-accent/10 group transition-all duration-300 hover:bg-accent/5">
+              <div className="w-16 h-16 bg-accent/10 group-hover:bg-accent rounded-full flex items-center justify-center mx-auto text-accent group-hover:text-white transition-colors duration-300">
                 <Shield className="w-8 h-8" />
               </div>
               <h3 className="font-serif text-xl font-bold">Quality Assured</h3>
@@ -322,8 +322,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </p>
             </Card>
 
-            <Card className="p-8 text-center space-y-4 hover-elevate border-accent/10">
-              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent">
+            <Card className="p-8 text-center space-y-4 hover-elevate border-accent/10 group transition-all duration-300 hover:bg-accent/5">
+              <div className="w-16 h-16 bg-accent/10 group-hover:bg-accent rounded-full flex items-center justify-center mx-auto text-accent group-hover:text-white transition-colors duration-300">
                 <Package className="w-8 h-8" />
               </div>
               <h3 className="font-serif text-xl font-bold">Sustainable Packaging</h3>
