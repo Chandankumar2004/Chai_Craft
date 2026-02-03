@@ -6,9 +6,9 @@ import { ShoppingCart, Menu, User as UserIcon, LogOut, Package, Youtube, Faceboo
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import logoImg from "@assets/ChatGPT_Image_Jan_17__2026__12_39_49_PM-removebg-preview_1769163582832.png";
-import founder1 from "@assets/founder1.png";
-import founder2 from "@assets/founder2.png";
-import founder3 from "@assets/founder3.png";
+import founder1 from "@/assets/founder1.png";
+import founder2 from "@/assets/founder2.png";
+import founder3 from "@/assets/founder3.png";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
