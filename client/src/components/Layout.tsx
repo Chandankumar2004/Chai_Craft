@@ -343,12 +343,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button className="bg-[#7d3c15] text-white px-10 py-7 rounded-2xl text-lg font-bold shadow-lg shadow-[#7d3c15]/20 hover-elevate">
-              Read Our Full Story
-            </Button>
-            <Button variant="outline" className="border-[#7d3c15] text-[#7d3c15] px-10 py-7 rounded-2xl text-lg font-bold hover:bg-[#7d3c15]/5">
-              Experience the Taste
-            </Button>
+            <Link href="/about">
+              <Button className="bg-[#7d3c15] text-white px-10 py-7 rounded-2xl text-lg font-bold shadow-lg shadow-[#7d3c15]/20 hover-elevate">
+                Read Our Full Story
+              </Button>
+            </Link>
+            <Link href="/menu">
+              <Button variant="outline" className="border-[#7d3c15] text-[#7d3c15] px-10 py-7 rounded-2xl text-lg font-bold hover:bg-[#7d3c15]/5">
+                Experience the Taste
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
