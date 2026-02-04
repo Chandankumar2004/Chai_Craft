@@ -86,7 +86,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const handleLinkClick = (href: string) => {
     setLocation(href);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const cartItems = useCart((state) => state.items);
@@ -343,12 +343,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/about">
+            <Link href="/about" onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })}>
               <Button className="bg-[#7d3c15] text-white px-10 py-7 rounded-2xl text-lg font-bold shadow-lg shadow-[#7d3c15]/20 hover-elevate">
                 Read Our Full Story
               </Button>
             </Link>
-            <Link href="/menu">
+            <Link href="/menu" onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })}>
               <Button variant="outline" className="border-[#7d3c15] text-[#7d3c15] px-10 py-7 rounded-2xl text-lg font-bold hover:bg-[#7d3c15]/5">
                 Experience the Taste
               </Button>
