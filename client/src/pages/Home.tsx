@@ -13,7 +13,7 @@ const teaGardenImages = [
   "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=2574&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1594631252845-29fc458695d7?q=80&w=2574&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1512727317027-4174b33fbfa0?q=80&w=2574&auto=format&fit=crop"
+  "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?q=80&w=2574&auto=format&fit=crop"
 ];
 
 export default function Home() {
@@ -197,7 +197,7 @@ export default function Home() {
               <div className="absolute -top-4 -left-4 w-full h-full border-2 border-primary rounded-2xl z-0" />
               {/* Unsplash pouring tea image */}
               <img 
-                src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=2487&auto=format&fit=crop" 
+                src="https://images.unsplash.com/photo-1594631252845-29fc458695d7?q=80&w=2487&auto=format&fit=crop" 
                 alt="Pouring Tea" 
                 className="rounded-2xl shadow-2xl relative z-10 w-full"
               />
