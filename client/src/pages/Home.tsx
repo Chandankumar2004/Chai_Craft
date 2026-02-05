@@ -197,7 +197,7 @@ export default function Home() {
               <div className="absolute -top-4 -left-4 w-full h-full border-2 border-primary rounded-2xl z-0" />
               {/* Unsplash pouring tea image */}
               <img 
-                src="https://images.unsplash.com/photo-1594631252845-29fc458695d7?q=80&w=2487&auto=format&fit=crop" 
+                src="https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=2487&auto=format&fit=crop" 
                 alt="Pouring Tea" 
                 className="rounded-2xl shadow-2xl relative z-10 w-full"
               />
